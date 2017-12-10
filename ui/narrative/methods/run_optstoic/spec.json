@@ -1,0 +1,156 @@
+{
+    "ver": "0.0.1",
+    "authors": [
+        "lqw5322"
+    ],
+    "contact": "http://kbase.us/contact-us/",
+    "visible": true,
+    "categories": ["active", "metabolic_modeling"],
+    "app_type": "editor",
+    "widgets": {
+        "input": null,
+        "output": null
+    },
+    "parameters": [ 
+        {
+            "id": "model_upa",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": [ "KBaseFBA.FBAModel" ]
+            }
+        },
+        {
+            "id": "start_compound_id",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "textsubdata",
+            "textsubdata_options": {
+                "allow_custom": true,
+                "show_src_obj": false,
+                "subdata_selection": {
+                    "parameter_id": "model_upa",
+                    "path_to_subdata": [
+                        "modelcompounds"
+                    ],
+                    "selection_id": "id",
+                    "selection_description": [
+                        "name"
+                    ],
+                    "subdata_included": [
+                        "modelcompounds/[*]/id",
+                        "modelcompounds/[*]/name"
+                    ],
+                    "description_template": "{{name}}"
+                },
+                "multiselection": false
+            }
+        },
+        {
+            "id": "target_compound_id",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "textsubdata",
+            "textsubdata_options": {
+                "allow_custom": true,
+                "show_src_obj": false,
+                "subdata_selection": {
+                    "parameter_id": "model_upa",
+                    "path_to_subdata": [
+                        "modelcompounds"
+                    ],
+                    "selection_id": "id",
+                    "selection_description": [
+                        "name"
+                    ],
+                    "subdata_included": [
+                        "modelcompounds/[*]/id",
+                        "modelcompounds/[*]/name"
+                    ],
+                    "description_template": "{{name}}"
+                },
+                "multiselection": false
+            }
+        },
+        {
+            "id": "max_steps",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": ["10"],
+            "field_type": "text",
+            "text_options": {
+                "validate_as": "int",
+                "min_int": 1
+            }
+        },
+        {
+            "id": "allow_heterologs",
+            "optional": false,
+            "advanced": true,
+            "allow_multiple": false,
+            "field_type": "checkbox",
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
+            }
+        },
+        {
+            "id": "dG_threshold",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "field_type": "text",
+            "text_options": {
+                "validate_as": "float"
+            }
+        }
+    ],
+    "behavior": {
+        "service-mapping": {
+            "url": "",
+            "name": "MaranasTools",
+            "method": "run_optstoic",
+            "input_mapping": [
+                {
+                    "input_parameter": "model_upa",
+                    "target_property": "model_upa"
+                },
+                {
+                    "input_parameter": "start_compound_id",
+                    "target_property": "start_compound"
+                },
+                {
+                    "input_parameter": "target_compound_id",
+                    "target_property": "target_compound"
+                },
+                {
+                    "input_parameter": "max_steps",
+                    "target_property": "max_steps"
+                },
+                {
+                    "input_parameter": "allow_heterologs",
+                    "target_property": "use_heterologous_steps"
+                },
+                {
+                    "input_parameter": "dG_threshold",
+                    "target_property": "dG_threshold"
+                }
+            ],
+            "output_mapping": [
+                {
+                    "service_method_output_path": [0,"simple_string"],
+                    "target_property": "simple_string"
+                }
+            ]
+        }
+    },
+    "job_id_output_field": "docker"
+}

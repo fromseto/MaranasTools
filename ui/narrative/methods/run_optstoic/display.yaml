@@ -1,0 +1,58 @@
+name: Run optStoic
+tooltip: |
+    Runs optStoic on either a Model or Biochemistry.
+screenshots: []
+
+icon: icon.png
+
+#
+# define a set of similar methods that might be useful to the user
+#
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    model_upa :
+        ui-name : |
+            An FBA Model
+        short-hint : |
+            An FBA Model to use to constrain the biochemistry space
+    start_compound_id :
+        ui-name : |
+            Start compound for pathfinding
+        short-hint : |
+            A start compound should (usually) be some limiting resource, such as a carbon source.
+    target_compound_id:
+        ui-name : |
+            Target compound for pathfinding
+        short-hint : |
+            The target compound for which yield will be maximized.
+    max_steps:
+        ui-name : |
+            Maximum reaction steps
+        short-hint : |
+            The maximum number of reaction steps allowed in the generated pathway.
+    allow_heterologs:
+        ui-name : |
+            Use heterologous steps
+        short-hint : |
+            Use heterologous reaction steps for the optimization
+    dG_threshold:
+        ui-name : |
+            Free energy threshold
+        short-hint : |
+            Maximum allowed free energy threshold.
+description : |
+    <p>This runs the optStoic method as published and maintained by the Maranas lab.</p>
