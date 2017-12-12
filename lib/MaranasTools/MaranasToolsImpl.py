@@ -74,6 +74,8 @@ This sample module contains one small method - filter_contigs.
         # ctx is the context object
         # return variables are: output
         #BEGIN run_optstoic
+        print "it is working"
+        output = "awesome"
         #END run_optstoic
 
         # At some point might do deeper type checking...

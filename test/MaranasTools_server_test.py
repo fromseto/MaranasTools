@@ -130,3 +130,12 @@ class MaranasToolsTest(unittest.TestCase):
                                            'assembly_input_ref': '1/fake/3',
                                            'min_length': 'ten'})
         self.assertIn('Cannot parse integer from min_length parameter', str(errorContext.exception))
+    
+    def test_run_optstoic(self):
+        # inputs = { ... define inputs here ... }
+        inputs = {None}
+        print "test_run_optstoic"
+        # expected_outputs = { ... defined expected results here ... }
+        outputs = self.getImpl().run_optstoic(self.getContext(), inputs)
+        # insert some assertion that outputs = expected_outputs below.
+        self.assertEqual(outputs[0], 'aweome')
