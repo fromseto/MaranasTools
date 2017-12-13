@@ -1,4 +1,4 @@
-# Author: Chiam Yu, Lin Wang
+# Author: Chiam Yu Ng, Lin Wang
 
 from __future__ import division
 from .config import cofactors, default_params, rxnSji, cofactorsList, kegg_compound

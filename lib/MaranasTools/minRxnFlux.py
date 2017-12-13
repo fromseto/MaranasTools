@@ -3,7 +3,6 @@
 # author: Chiam Yu Ng
 """
  MinRxnFlux program 
-Currently, it has been tested with GLPK, Gurobi and CPLEX solver.
 
 """
 
@@ -16,8 +15,6 @@ import gams_parser
 import json
 import pdb
 import logging
-from ..core import database
-
 
 # Global variables/solver options
 EPS = 1e-5
@@ -68,6 +65,161 @@ def load_pulp_solver():
         logging.warning("No solver is available! Program will be terminated.")
         return None
     return pulp_solver
+
+
+class Database(object):
+    """optstoic Database class: loading database from GAMS input file"""
+
+    def __init__(self, version='', data_filepath='../data/', dbdict={}):
+        self.data_filepath = data_filepath
+        self.dbdict = dbdict
+        self.reactions = []
+        self.metabolites = []
+        self.S = {}
+        self.Sji = {}
+        self.rxntype = []
+        self.loops = []
+        self.Ninternal = {}
+        self.all_excluded_reactions = []
+        self.excluded_reactions = dbdict.get('excluded_reactions_list') or []
+        self.user_defined_export_rxns = []
+        self.blocked_rxns = []
+
+    def load(self):
+
+        # Load S matrix dictionary (S(i,j)) from json
+        if 'S' not in self.dbdict:
+            self.Sji = json.load(open(os.path.join(self.data_filepath,
+                                                   self.dbdict['Sji']), 'r+'))
+
+            self.S = self.transpose_S(self.Sji)
+        else:
+            try:
+                self.S = json.load(open(os.path.join(self.data_filepath,
+                                                     self.dbdict['S']), 'r+'))
+
+            except:
+                # TODO add function to differentiate json/txt input
+                self.S = gams_parser.convert_parameter_table_to_dict(
+                    os.path.join(self.data_filepath,
+                                 '20160616_optstoic_Sij.txt')
+                )
+            self.Sji = self.transpose_S(self.S)
+
+        # Load reactions
+        logging.debug('Reading reaction file...')
+        self.reactions = gams_parser.convert_set_to_list(
+            os.path.join(self.data_filepath, self.dbdict['reaction'])
+        )
+
+        self.internal_rxns = copy.deepcopy(self.reactions)
+
+        logging.debug('Reading metabolite file...')
+        self.metabolites = gams_parser.convert_set_to_list(
+            os.path.join(self.data_filepath, self.dbdict['metabolite'])
+        )
+
+        logging.debug('Reading blocked reactions file...')
+        if 'blocked_rxns' in self.dbdict:
+            self.blocked_rxns = gams_parser.convert_set_to_list(
+                os.path.join(self.data_filepath, self.dbdict['blocked_rxns'])
+            )
+
+        self.all_excluded_reactions = list(
+            set(self.excluded_reactions + self.blocked_rxns)
+        )
+
+        logging.debug('Reading reaction type file...')
+        self.rxntype = gams_parser.convert_parameter_list_to_dict(
+            os.path.join(self.data_filepath, self.dbdict['reactiontype']),
+            datadict=None
+        )
+
+        logging.debug('Reading loop file...')
+        self.loops = gams_parser.convert_set_to_list(
+            os.path.join(self.data_filepath, self.dbdict['loops']))
+
+        logging.debug('Reading Nint(loop, j) file...')
+        self.Ninternal = gams_parser.convert_parameter_table_to_dict(
+            os.path.join(self.data_filepath, self.dbdict['Nint']))
+
+    @staticmethod
+    def transpose_S(Sji):
+        """Tranpose Sji into Sij and also Sij to Sji dictionary."""
+        # Update to pandas 0.19 (using sparse dataframe)
+        df_Sji = pd.DataFrame(Sji).T
+        Sij = dict(
+            (k, v.dropna().to_dict()) for k, v in pd.compat.iteritems(df_Sji)
+        )
+        return Sij
+
+    @staticmethod
+    def to_json(Sdict, filepath):
+        with open(filepath, 'w+') as fp:
+            json.dump(Sdict, fp, sort_keys=True, indent=4)
+
+    def to_mat_file():
+        """write to matlab file"""
+        pass
+
+    def get_reaction_type(self, rid, verbose=True):
+        try:
+            self.rxntype[rid]
+        except:
+            print "Reaction %s not in database!" % rid
+            return None
+        else:
+            if verbose:
+                print "Reaction: {0} is ({1}) {2}".format(
+                    rid, self.rxntype[rid], REACTION_TYPE[self.rxntype[rid]]
+                )
+            return self.rxntype[rid]
+
+    def extend_S_from_file(self, filename='Sij_extension_for_glycolysis.txt'):
+        self.S = gams_parser.convert_parameter_table_to_dict(
+            os.path.join(self.data_filepath, filename), Sdict=self.S)
+
+    def update_S(self, extension_dict):
+        temp_rxn = []
+        for met, entries in extension_dict.iteritems():
+            if met not in self.S:
+                self.S[met] = {}
+                self.metabolites.append(met)
+            for rxn, coeff in entries.iteritems():
+                self.S[met][rxn] = float(coeff)
+                if rxn not in self.reactions:
+                    self.reactions.append(rxn)
+                    temp_rxn.append(rxn)
+        return self.S, temp_rxn
+
+    def set_database_export_reaction(self, export_reactions_Sij_dict):
+        _, temp_rxn = self.update_S(export_reactions_Sij_dict)
+        if len(self.user_defined_export_rxns) != 0:
+            logging.warning("Warning: The current list of export reactions\
+                will be replaced! %s" % str(self.user_defined_export_rxns))
+        self.user_defined_export_rxns = temp_rxn
+        for rxn in self.user_defined_export_rxns:
+            self.rxntype[rxn] = 4
+        return 1
+
+    def update_rxntype(self, new_reaction_type_dict):
+        for (r, rtype) in new_reaction_type_dict.iteritems():
+            try:
+                t0 = self.rxntype[r]
+                self.rxntype[r] = rtype
+            except KeyError:
+                logging.warning('Reaction %s not in database!' % r)
+            else:
+                logging.info('Reaction %s has been updated from %s to %s.'
+                             % (r, REACTION_TYPE[t0], REACTION_TYPE[rtype])
+                             )
+
+        return self.rxntype
+
+    def __str__(self):
+        return "OptStoic Database(Version='%s')" % self.version
+
+
 
 class MinRxnFlux(object):
     """An MinRxnFlux problem Class"""
