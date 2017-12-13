@@ -7,7 +7,7 @@ def run_optStoic(parameters):
     metabolites = met_S.keys()
     substrate_metabolite = "C00267"
     target_metabolite = "C00033"
-    dGmax = 0
+    dGmax = 5
     M = 100
     objective = 'MaxTargetYield'
     EPS = 1e-5
@@ -51,15 +51,15 @@ def run_optStoic(parameters):
 
     lp_prob += s[substrate_metabolite] == -1
 
-    # if objective == 'MaxTargetYield':
-    #     for i in metabolites:
-    #         if met_S[i]['C'] > 0 and i != substrate_metabolite: 
-    #             lp_prob += s[i] >= 0
+    if objective == 'MaxTargetYield':
+        for i in metabolites:
+            if met_S[i]['C'] > 0 and i != substrate_metabolite: 
+                lp_prob += s[i] >= 0
 
     # lp_prob += pulp.lpSum(s[i] for i in metabolites) == 2
-    for i in metabolites:
-        if i not in allow_list_metabolite:
-            lp_prob += s[i] == 0
+    # for i in metabolites:
+    #     if i not in allow_list_metabolite:
+    #         lp_prob += s[i] == 0
 
     #------- solve the problem
     GUROBI_CMD_OPTIONS = [('Threads', 2), ('TimeLimit', 1200), \
@@ -68,10 +68,42 @@ def run_optStoic(parameters):
                     options=GUROBI_CMD_OPTIONS)
     lp_prob.solve(pulp_solver)
 
+    # for i in metabolites:
+    #     if s[i].varValue is not None:
+    #         if s[i].varValue > EPS or s[i].varValue < -EPS:
+    #             print i, s[i].varValue
+
+    # LW: selct one of the solution from optStoic
+    # this is my implementation as a way to selct stoichiometry from a number
+    # of solutions. (different from the paper)
+    # redefine the objective as minimize sum of all s except proton
+    z = pulp.LpVariable.dicts("z", metabolites, lowBound=0, upBound=M, \
+                                cat='Continuous')
+
+    metabolites_no_proton = []
+    for i in metabolites:
+        if i != "C00080":
+            metabolites_no_proton.append(i)
+
+    lp_prob.setObjective(pulp.lpSum(z[i] for i in metabolites_no_proton))
+    lp_prob.sense = pulp.LpMinimize
+    for i in metabolites:
+        lp_prob += s[i] <= z[i]
+        lp_prob += -s[i] <= z[i]
+
+    lp_prob += s[target_metabolite] == s[target_metabolite].varValue
+
+    lp_prob.solve(pulp_solver)
+
+    print "-----------------------"
     for i in metabolites:
         if s[i].varValue is not None:
             if s[i].varValue > EPS or s[i].varValue < -EPS:
                 print i, s[i].varValue
+
+
+def run_minFlux(parameters):
+    pass
 
 
 if __name__ == '__main__':
