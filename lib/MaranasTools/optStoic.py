@@ -1,5 +1,17 @@
+#/usr/bin/python
+
+# author: Lin Wang
+"""
+ MinRxnFlux program 
+
+"""
 import pulp
 import json
+
+GUROBI_CMD_OPTIONS = [('Threads', 2), ('TimeLimit', 1200), \
+                ('MIPGapAbs', 1e-6), ('MIPGap', 1e-6), ('CliqueCuts', 2)]
+pulp_solver = pulp.solvers.GUROBI_CMD(path=None, keepFiles=0, mip=1, msg=1,
+                options=GUROBI_CMD_OPTIONS)
 
 def run_optStoic(parameters):
     met_S = json.load(open("../../data/met_details_dict_v2.json"))
@@ -11,14 +23,14 @@ def run_optStoic(parameters):
     M = 100
     objective = 'MaxTargetYield'
     EPS = 1e-5
-    allow_list_metabolite = ['C00007',#    /*o2*/
-                            'C00267',#    /*glc*/
-                            # 'C00011',#    /*co2*/
-                            'C00080',#    /*h+*/
-                            'C00001',#    /*h2o*/
-                            # 'C02457',#    /*13pdo*/
-                            'C00033',#    /*acetate*/
-                            ]
+    # allow_list_metabolite = ['C00007',#    /*o2*/
+    #                         'C00267',#    /*glc*/
+    #                         # 'C00011',#    /*co2*/
+    #                         'C00080',#    /*h+*/
+    #                         'C00001',#    /*h2o*/
+    #                         # 'C02457',#    /*13pdo*/
+    #                         'C00033',#    /*acetate*/
+    #                         ]
 
     #------- define variables
     # zp      objective function
@@ -62,10 +74,6 @@ def run_optStoic(parameters):
     #         lp_prob += s[i] == 0
 
     #------- solve the problem
-    GUROBI_CMD_OPTIONS = [('Threads', 2), ('TimeLimit', 1200), \
-                    ('MIPGapAbs', 1e-6), ('MIPGap', 1e-6), ('CliqueCuts', 2)]
-    pulp_solver = pulp.solvers.GUROBI_CMD(path=None, keepFiles=0, mip=1, msg=1,
-                    options=GUROBI_CMD_OPTIONS)
     lp_prob.solve(pulp_solver)
 
     # for i in metabolites:
@@ -102,9 +110,75 @@ def run_optStoic(parameters):
                 print i, s[i].varValue
 
 
-def run_minFlux(parameters):
-    pass
+def run_minRxnFlux(parameters):
+    db = load_db_v3_phosphoketolase(data_dir)
+    logging.info("Database loaded!")
 
+    df_bounds = pd.read_csv('specific_bounds.csv', index_col=0)
+    specific_bounds = df_bounds.to_dict(orient='index')
+
+    pulp_solver = load_pulp_solver()
+
+    MAX_ITERATION = 10
+    USE_LOOPLESS = False
+    CLEANUP = True #set to true if you want to delete all .sol and .lp files
+
+    test = MinRxnFlux(db, objective='MinFlux',
+                    specific_bounds=specific_bounds,
+                    use_loopless=USE_LOOPLESS,
+                    max_iteration=MAX_ITERATION,
+                    pulp_solver=pulp_solver,
+                    data_filepath=data_dir,
+                    result_filepath=res_dir,
+                    M=1000)
+
+    lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
+
+    # Creating kegg model and drawing pathways
+    f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
+    pathway_objects = []
+
+    for ind, res in sorted(test.pathways.iteritems()):
+        p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
+        p.rearrange_reaction_order()
+        pathway_objects.append(p)
+        generate_kegg_model(p, filehandle=f)
+        graph_title = "{0}_P{1}".format(p.name, p.id)
+        draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+                    imageFormat='png', graphTitle=graph_title, darkBackgroundMode=False, debug=True)
+    f.close()
+    print "Generate kegg_model and draw pathway: Pass!"
+
+
+
+def load_db_v3_phosphoketolase(data_dir)
+
+    dbdict = {
+        'Sji': 'optstoic_v3_Sji_dict.json',
+        'reaction': 'optstoic_v3_reactions.txt',
+        'metabolite': 'optstoic_v3_metabolites.txt',
+        'reactiontype': 'optstoic_v3_reactiontype.txt',
+    }
+
+    DB = Database(data_filepath=data_dir, dbdict=dbdict)
+    
+    DB.load()
+
+    user_defined_export_rxns_Sji = {
+    'EX_glucose': {'C00031': -1.0}, #use C00031 for more general glucose
+    # 'EX_D_Xylose': {'C00181': -1.0},
+    'EX_hplus': {'C00080': -1.0}, #pulp or gurobi has issue with "h+"
+    # 'EX_ac': {'C00033': -1.0},
+    'EX_h2o': {'C00001': -1.0}
+    }
+
+    user_defined_export_rxns_Sij = Database.transpose_S(
+        user_defined_export_rxns_Sji
+    )
+
+    DB.set_database_export_reaction(user_defined_export_rxns_Sij)
+
+    return DB
 
 if __name__ == '__main__':
     parameters = ''
