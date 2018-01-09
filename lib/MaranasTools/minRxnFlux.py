@@ -11,10 +11,11 @@ import os, time, sys
 import copy
 import random
 import string  # to generate random hex code
-import gams_parser
 import json
 import pdb
 import logging
+import pandas as pd
+import gams_parser
 
 # Global variables/solver options
 EPS = 1e-5
@@ -22,7 +23,9 @@ GUROBI_OPTIONS = 'Threads=2 TimeLimit=1800 MIPGapAbs=1e-6 MIPGap=1e-6 CliqueCuts
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.normpath(os.path.join(
-    current_dir, '../data/', 'optstoic_db_v3'))
+    current_dir, '../../data/'))
+res_dir = os.path.normpath(os.path.join(
+    current_dir, '../../data/','out'))
 
 # "linux2" is the platform for lxcluster/hammer
 # if sys.platform == 'cygwin' and sys.platform =='linux2':
@@ -134,14 +137,6 @@ class Database(object):
             os.path.join(self.data_filepath, self.dbdict['reactiontype']),
             datadict=None
         )
-
-        logging.debug('Reading loop file...')
-        self.loops = gams_parser.convert_set_to_list(
-            os.path.join(self.data_filepath, self.dbdict['loops']))
-
-        logging.debug('Reading Nint(loop, j) file...')
-        self.Ninternal = gams_parser.convert_parameter_table_to_dict(
-            os.path.join(self.data_filepath, self.dbdict['Nint']))
 
     @staticmethod
     def transpose_S(Sji):
@@ -511,3 +506,86 @@ class MinRxnFlux(object):
 
     def __repr__(self):
         return "<OptStoic(objective='%s')>" % (self.objective)
+
+def run_minRxnFlux(optSotic_result_dict):
+    db = load_db_rxns(data_dir,optSotic_result_dict)
+    logging.info("Database loaded!")
+
+    # df_bounds = pd.read_csv('specific_bounds.csv', index_col=0)
+    # specific_bounds = df_bounds.to_dict(orient='index')
+    specific_bounds = {}
+    for met,stoich in optSotic_result_dict.iteritems():
+        if met == "C00080":
+            specific_bounds['EX_'+met] = {'LB': -5, 'UB': 5}
+        else:
+            specific_bounds['EX_'+met] = {'LB': stoich, 'UB': stoich}
+
+    pulp_solver = load_pulp_solver()
+
+    MAX_ITERATION = 10
+    USE_LOOPLESS = False
+    CLEANUP = True #set to true if you want to delete all .sol and .lp files
+
+    test = MinRxnFlux(db, objective='MinFlux',
+                    specific_bounds=specific_bounds,
+                    max_iteration=MAX_ITERATION,
+                    pulp_solver=pulp_solver,
+                    data_filepath=data_dir,
+                    result_filepath=res_dir,
+                    M=1000)
+
+    lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
+
+    # Creating kegg model and drawing pathways
+    f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
+    pathway_objects = []
+
+    for ind, res in sorted(test.pathways.iteritems()):
+        p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
+        p.rearrange_reaction_order()
+        pathway_objects.append(p)
+        generate_kegg_model(p, filehandle=f)
+        graph_title = "{0}_P{1}".format(p.name, p.id)
+        draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+                    imageFormat='png', graphTitle=graph_title, darkBackgroundMode=False, debug=True)
+    f.close()
+    print "Generate kegg_model and draw pathway: Pass!"
+
+def load_db_rxns(data_dir,optSotic_result_dict):
+
+    dbdict = {
+        'Sji': 'optstoic_v3_Sji_dict.json',
+        'reaction': 'optstoic_v3_reactions.txt',
+        'metabolite': 'optstoic_v3_metabolites.txt',
+        'reactiontype': 'optstoic_v3_reactiontype.txt',
+    }
+
+    DB = Database(data_filepath=data_dir, dbdict=dbdict)
+    
+    DB.load()
+
+    # user_defined_export_rxns_Sji = {
+    # 'EX_glucose': {'C00031': -1.0}, #use C00031 for more general glucose
+    # # 'EX_D_Xylose': {'C00181': -1.0},
+    # 'EX_hplus': {'C00080': -1.0}, #pulp or gurobi has issue with "h+"
+    # # 'EX_ac': {'C00033': -1.0},
+    # 'EX_h2o': {'C00001': -1.0}
+    # }
+    user_defined_export_rxns_Sji = {}
+    for met,stoich in optSotic_result_dict.iteritems():
+        user_defined_export_rxns_Sji['EX_'+met] = {met: stoich}
+
+
+    user_defined_export_rxns_Sij = Database.transpose_S(
+        user_defined_export_rxns_Sji
+    )
+
+    DB.set_database_export_reaction(user_defined_export_rxns_Sij)
+
+    return DB
+
+if __name__ == '__main__':
+    parameters = {'C00033': 3.0,
+                'C00267': -1.0,
+                'C00080': 3.0}
+    run_minRxnFlux(parameters)
