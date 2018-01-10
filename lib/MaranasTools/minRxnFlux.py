@@ -275,11 +275,11 @@ class MinRxnFlux(object):
 
         # Initialize variables
         v = pulp.LpVariable.dicts("v", self.database.reactions,
-                                  lowBound=-M, upBound=M, cat=self.varCat)
+                                  lowBound=-M, upBound=M, cat='Continuous')
         vf = pulp.LpVariable.dicts("vf", self.database.reactions,
-                                   lowBound=0, upBound=M, cat=self.varCat)
+                                   lowBound=0, upBound=M, cat='Continuous')
         vb = pulp.LpVariable.dicts("vb", self.database.reactions,
-                                   lowBound=0, upBound=M, cat=self.varCat)
+                                   lowBound=0, upBound=M, cat='Continuous')
         yf = pulp.LpVariable.dicts("yf", self.database.reactions,
                                    lowBound=0, upBound=1, cat='Binary')
         yb = pulp.LpVariable.dicts("yb", self.database.reactions,
@@ -300,6 +300,8 @@ class MinRxnFlux(object):
                 yf[j].upBound = 0
                 yb[j].lowBound = 0
                 yb[j].upBound = 0
+
+                continue
 
             if self.database.rxntype[j] == 0:
                 # Forward irreversible
@@ -385,7 +387,7 @@ class MinRxnFlux(object):
         else:
             a = None
             G = None
-
+        lp_prob.writeLP("./test_OptStoic.lp")
         return lp_prob, v, vf, vb, yf, yb, a, G
 
     def solve(self, exclude_existing_solution=False, outputfile="OptStoic_pulp_result.txt", max_iteration=None):
@@ -515,8 +517,9 @@ def run_minRxnFlux(optSotic_result_dict):
     # specific_bounds = df_bounds.to_dict(orient='index')
     specific_bounds = {}
     for met,stoich in optSotic_result_dict.iteritems():
+        print met
         if met == "C00080":
-            specific_bounds['EX_'+met] = {'LB': -5, 'UB': 5}
+            specific_bounds['EX_'+met] = {'LB': -10, 'UB': 10}
         else:
             specific_bounds['EX_'+met] = {'LB': stoich, 'UB': stoich}
 
@@ -573,7 +576,7 @@ def load_db_rxns(data_dir,optSotic_result_dict):
     # }
     user_defined_export_rxns_Sji = {}
     for met,stoich in optSotic_result_dict.iteritems():
-        user_defined_export_rxns_Sji['EX_'+met] = {met: stoich}
+        user_defined_export_rxns_Sji['EX_'+met] = {met: -1}
 
 
     user_defined_export_rxns_Sij = Database.transpose_S(
