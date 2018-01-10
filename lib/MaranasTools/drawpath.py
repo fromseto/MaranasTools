@@ -1,7 +1,7 @@
 # Author: Chiam Yu Ng, Lin Wang
 
 from __future__ import division
-from .config import cofactors, default_params, rxnSji, cofactorsList, kegg_compound
+from config import cofactors, default_params, rxnSji, cofactorsList, kegg_compound
 import os
 from collections import OrderedDict
 import graphviz as gv
@@ -324,278 +324,271 @@ class Pathway(object):
 
         return output
 
-class Draw(object):
-    kegg_compound['C00009'] = 'Pi'
-    kegg_compound['C00013'] = 'PPi'
-    kegg_compound['C00236'] = '1,3-Bisphospho-D-glycerate'
-    kegg_compound['C00111'] = 'dihydroxyacetone phosphate'
+kegg_compound['C00009'] = 'Pi'
+kegg_compound['C00013'] = 'PPi'
+kegg_compound['C00236'] = '1,3-Bisphospho-D-glycerate'
+kegg_compound['C00111'] = 'dihydroxyacetone phosphate'
 
-    REACTION_FONT_SIZE = '28'
-    color_configs = {}
-    color_configs['light'] = dict(COFACTOR_SHAPE="ellipse",  # "diamond"
-                                  OTHER_COFACTOR_COLOR='#B6B6B6',
-                                  NONCOFACTOR_SHAPE="plaintext",  # "box"
-                                  NONCOFACTOR_COLOR='transparent',  # "#FFFFFF"
-                                  REACTION_COLOR="#512DA8",
-                                  RXN_NODE_COLOR="#323232",
-                                  EDGE_COLOR="#323232",  # "#505050"
-                                  BACKGROUND_COLOR="transparent",
-                                  ALL_FONT_COLOR="black")
+REACTION_FONT_SIZE = '28'
+color_configs = {}
+color_configs['light'] = dict(COFACTOR_SHAPE="ellipse",  # "diamond"
+                              OTHER_COFACTOR_COLOR='#B6B6B6',
+                              NONCOFACTOR_SHAPE="plaintext",  # "box"
+                              NONCOFACTOR_COLOR='transparent',  # "#FFFFFF"
+                              REACTION_COLOR="#512DA8",
+                              RXN_NODE_COLOR="#323232",
+                              EDGE_COLOR="#323232",  # "#505050"
+                              BACKGROUND_COLOR="transparent",
+                              ALL_FONT_COLOR="black")
 
 
-    color_configs['light']['colorMapping'] = {
-        'C00002': '#F05456', 'C00008': '#FFC000',
-        'C00003': '#149B76', 'C00004': '#149B76',
-        'C00005': '#2393CB', 'C00006': '#2393CB'
-    }
+color_configs['light']['colorMapping'] = {
+    'C00002': '#F05456', 'C00008': '#FFC000',
+    'C00003': '#149B76', 'C00004': '#149B76',
+    'C00005': '#2393CB', 'C00006': '#2393CB'
+}
 
-    def generate_kegg_model(pathway, params=default_params,
-        filehandle=None, add_ratio_constraints=False):
-        """
-        Convert the pathway to KEGG model format
-        (as input for Component Contribution/MDF)
+def generate_kegg_model(pathway, params=default_params,
+    filehandle=None, add_ratio_constraints=False):
+    """
+    Convert the pathway to KEGG model format
+    (as input for Component Contribution/MDF)
 
-        Keyword arguments:
-        pathway -- pathway object
-        params -- Kegg model parameters (default parameters are given)
-        filehandle -- If a text file handle is provided,
-                      it write the model text to the file (default None)
+    Keyword arguments:
+    pathway -- pathway object
+    params -- Kegg model parameters (default parameters are given)
+    filehandle -- If a text file handle is provided,
+                  it write the model text to the file (default None)
 
-        """
-        params['ENTRY'] = "{0}_{1}ATP_P{2}".format(pathway.name,
-                                                   pathway.nATP, pathway.id)
-        params['NAME'] = "{0}_{1}ATP_P{2}".format(pathway.name,
-                                                  pathway.nATP, pathway.id)
+    """
+    params['ENTRY'] = "{0}_{1}ATP_P{2}".format(pathway.name,
+                                               pathway.nATP, pathway.id)
+    params['NAME'] = "{0}_{1}ATP_P{2}".format(pathway.name,
+                                              pathway.nATP, pathway.id)
 
-        modeltext = """\
-        ENTRY\t\t{ENTRY}
-        SKIP\t\t{SKIP}
-        NAME\t\t{NAME}
-        PH\t\t\t{PH}
-        I\t\t\t{I}
-        T\t\t\t{T}
-        C_RANGE\t\t{C_RANGE[0]:.0e} {C_RANGE[1]:.0e}\n""".format(**params)
+    modeltext = """\
+    ENTRY\t\t{ENTRY}
+    SKIP\t\t{SKIP}
+    NAME\t\t{NAME}
+    PH\t\t\t{PH}
+    I\t\t\t{I}
+    T\t\t\t{T}
+    C_RANGE\t\t{C_RANGE[0]:.0e} {C_RANGE[1]:.0e}\n""".format(**params)
 
-        all_bounds = params['BOUND']
+    all_bounds = params['BOUND']
 
-        if add_ratio_constraints:
-            all_bounds = params['RATIO_BOUND']
+    if add_ratio_constraints:
+        all_bounds = params['RATIO_BOUND']
 
-            # write the ratios
-            for i, (cids, ratios) in enumerate(sorted(params['RATIO'].iteritems())):
-                if i == 0:
-                    modeltext += "RATIO\t\t{C[0]} {C[1]} {B[0]:e} {B[1]:e}\n".format(C=cids, B=ratios)
-                else:
-                    modeltext += "\t\t\t{C[0]} {C[1]} {B[0]:e} {B[1]:e}\n".format(C=cids, B=ratios)
-
-        # write the bounds
-        for i, (cid, bounds) in enumerate(sorted(all_bounds.iteritems())):
+        # write the ratios
+        for i, (cids, ratios) in enumerate(sorted(params['RATIO'].iteritems())):
             if i == 0:
-                modeltext += "BOUND\t\t{0} {1[0]:e} {1[1]:e}\n".format(cid, bounds)
+                modeltext += "RATIO\t\t{C[0]} {C[1]} {B[0]:e} {B[1]:e}\n".format(C=cids, B=ratios)
             else:
-                modeltext += "\t\t\t{0} {1[0]:e} {1[1]:e}\n".format(cid, bounds)
+                modeltext += "\t\t\t{C[0]} {C[1]} {B[0]:e} {B[1]:e}\n".format(C=cids, B=ratios)
 
-        # write the reactions (in the direction of the flux)
-        for i, rxn in enumerate(pathway.reactions):
-            rxn.set_equation()
-            if i == 0:
-                modeltext += "REACTION\t{0} {1} (x{2:1.2f})\n".format(
-                    rxn.rid, rxn.equation, abs(rxn.flux))
-            else:
-                modeltext += "\t\t\t{0} {1} (x{2:1.2f})\n".format(
-                    rxn.rid, rxn.equation, abs(rxn.flux))
+    # write the bounds
+    for i, (cid, bounds) in enumerate(sorted(all_bounds.iteritems())):
+        if i == 0:
+            modeltext += "BOUND\t\t{0} {1[0]:e} {1[1]:e}\n".format(cid, bounds)
+        else:
+            modeltext += "\t\t\t{0} {1[0]:e} {1[1]:e}\n".format(cid, bounds)
 
-        modeltext += "///\n"
-        if filehandle:
-            filehandle.write(modeltext)
+    # write the reactions (in the direction of the flux)
+    for i, rxn in enumerate(pathway.reactions):
+        rxn.set_equation()
+        if i == 0:
+            modeltext += "REACTION\t{0} {1} (x{2:1.2f})\n".format(
+                rxn.rid, rxn.equation, abs(rxn.flux))
+        else:
+            modeltext += "\t\t\t{0} {1} (x{2:1.2f})\n".format(
+                rxn.rid, rxn.equation, abs(rxn.flux))
 
-        return modeltext
+    modeltext += "///\n"
+    if filehandle:
+        filehandle.write(modeltext)
 
-    # ########################################
+    return modeltext
 
-    def load_global_styles(colorConfig):
-        """
-        Create a global styles dictionary for all Graphviz graph
-        """
-        colorMapping = colorConfig['colorMapping']
-        for c in cofactorsList:
-            if c not in colorMapping:
-                colorMapping[c] = colorConfig['OTHER_COFACTOR_COLOR']
+# ########################################
 
-        global_styles = {
-            'graph': {
-                'fontsize': '20',
-                'fontname': 'Helvetica',
-                'bgcolor': colorConfig['BACKGROUND_COLOR'],
-                # 'rankdir': 'BT',
-            },
-            'nodes': {
-                'fontname': 'Helvetica',
-                'fontsize': '30',
-                # 'shape': 'hexagon',
-                'fontcolor': colorConfig['ALL_FONT_COLOR'],
-                # 'color': 'white',
-                # 'style': 'filled',
-                # 'fillcolor': '#006699',
-            },
-            'edges': {
-                # 'style': 'dashed',
-                # 'color': 'white',
-                # 'arrowhead': 'open',
-                'fontname': 'Helvetica',
-                'fontsize': '24',
-                # 'fontcolor': 'white',
-            }
+def load_global_styles(colorConfig):
+    """
+    Create a global styles dictionary for all Graphviz graph
+    """
+    colorMapping = colorConfig['colorMapping']
+    for c in cofactorsList:
+        if c not in colorMapping:
+            colorMapping[c] = colorConfig['OTHER_COFACTOR_COLOR']
+
+    global_styles = {
+        'graph': {
+            'fontsize': '20',
+            'fontname': 'Helvetica',
+            'bgcolor': colorConfig['BACKGROUND_COLOR'],
+            # 'rankdir': 'BT',
+        },
+        'nodes': {
+            'fontname': 'Helvetica',
+            'fontsize': '30',
+            # 'shape': 'hexagon',
+            'fontcolor': colorConfig['ALL_FONT_COLOR'],
+            # 'color': 'white',
+            # 'style': 'filled',
+            # 'fillcolor': '#006699',
+        },
+        'edges': {
+            # 'style': 'dashed',
+            # 'color': 'white',
+            # 'arrowhead': 'open',
+            'fontname': 'Helvetica',
+            'fontsize': '24',
+            # 'fontcolor': 'white',
         }
-        return global_styles, colorMapping
+    }
+    return global_styles, colorMapping
 
 
-    def apply_styles(graph, styles):
-        """
-        Apply the styles to a Graphviz graph.
-        """
-        graph.graph_attr.update(
-            ('graph' in styles and styles['graph']) or {}
-        )
-        graph.node_attr.update(
-            ('nodes' in styles and styles['nodes']) or {}
-        )
-        graph.edge_attr.update(
-            ('edges' in styles and styles['edges']) or {}
-        )
-        return graph
+def apply_styles(graph, styles):
+    """
+    Apply the styles to a Graphviz graph.
+    """
+    graph.graph_attr.update(
+        ('graph' in styles and styles['graph']) or {}
+    )
+    graph.node_attr.update(
+        ('nodes' in styles and styles['nodes']) or {}
+    )
+    graph.edge_attr.update(
+        ('edges' in styles and styles['edges']) or {}
+    )
+    return graph
 
 
-    def draw_pathway(Pathway, imageFileName=None, imageFormat='png',
-        graphTitle='', scaleLineWidth=False, scalingFactor=200.0,
-        cleanup=True, engine='dot', debug=False):
-        """
-        Draw a digraph for a Pathway objects and render it as
-        the given imageFormat using Graphviz.
+def draw_pathway(Pathway, imageFileName=None, imageFormat='png',
+    graphTitle='', scaleLineWidth=False, scalingFactor=200.0,
+    cleanup=True, engine='dot', debug=False):
+    """
+    Draw a digraph for a Pathway objects and render it as
+    the given imageFormat using Graphviz.
 
-        Keyword arguments:
-        Pathway -- A Pathway object (pathway.py)
-        imageFileName -- Name of the output file (default Pathway.name)
-        imageFormat -- Any format that Graphviz can support (default 'png')
-        graphTitle -- Title of the output graph
-        scaleLineWidth -- If true, scale the penwidth of an edge
-                          to a value between 1 and 10. This is useful when
-                          fluxes are too large.
-                          Else, the penwidth of an edge is absolute value
-                          of the flux value.  (default False)
-        scalingFactor -- If scaleLineWidth is true,
-                         penwidth = (abs(flux)/scalingFactor) * 10 + 1.
-                         (E.g. Use the maximum flux values of a
-                         pathway as the scaling Factor)
-        cleanup -- delete the ".dot" file after drawing
-        engine -- Graphviz layout engine used to render the graph.
-                  Layout engines = {'circo', 'dot', 'fdp', 'neato', 'nop1', 'nop2',
-                                    'osage', 'patchwork', 'sfdp', 'twopi'}
-        """
-        if debug:
-            logging.warning('Debug mode: Drawing pathway.')
+    Keyword arguments:
+    Pathway -- A Pathway object (pathway.py)
+    imageFileName -- Name of the output file (default Pathway.name)
+    imageFormat -- Any format that Graphviz can support (default 'png')
+    graphTitle -- Title of the output graph
+    scaleLineWidth -- If true, scale the penwidth of an edge
+                      to a value between 1 and 10. This is useful when
+                      fluxes are too large.
+                      Else, the penwidth of an edge is absolute value
+                      of the flux value.  (default False)
+    scalingFactor -- If scaleLineWidth is true,
+                     penwidth = (abs(flux)/scalingFactor) * 10 + 1.
+                     (E.g. Use the maximum flux values of a
+                     pathway as the scaling Factor)
+    cleanup -- delete the ".dot" file after drawing
+    engine -- Graphviz layout engine used to render the graph.
+              Layout engines = {'circo', 'dot', 'fdp', 'neato', 'nop1', 'nop2',
+                                'osage', 'patchwork', 'sfdp', 'twopi'}
+    """
+    if debug:
+        logging.warning('Debug mode: Drawing pathway.')
 
-        colorConfig = color_configs['light']
+    colorConfig = color_configs['light']
 
-        global_styles, colorMapping = load_global_styles(colorConfig)
-        metabolite_fontname = 'helvetica bold'
-        #bypass issue with transparent color for vector image in AI
-        if imageFormat.lower() in ['svg', 'eps']:
-            colorConfig['NONCOFACTOR_COLOR'] = '#FFFFFF'
+    global_styles, colorMapping = load_global_styles(colorConfig)
+    metabolite_fontname = 'helvetica bold'
+    #bypass issue with transparent color for vector image in AI
+    if imageFormat.lower() in ['svg', 'eps']:
+        colorConfig['NONCOFACTOR_COLOR'] = '#FFFFFF'
 
-        g = gv.Digraph('G', format=imageFormat, engine=engine)
+    g = gv.Digraph('G', format=imageFormat, engine=engine)
 
-        # g.graph_attr['ratio']='fill'
-        g.graph_attr['size'] = "10, 10"
-        if imageFormat == 'png':
-            g.graph_attr['dpi'] = '300'
-        elif imageFormat == 'svg':
-            g.graph_attr['dpi'] = '72'
-        g.graph_attr['forcelabels'] = 'true'
-        g.graph_attr['labelloc'] = 't'  # top or 'b'
-        g.graph_attr['label'] = graphTitle
-        g = apply_styles(g, global_styles)
-        r_counter = 1
+    # g.graph_attr['ratio']='fill'
+    g.graph_attr['size'] = "10, 10"
+    if imageFormat == 'png':
+        g.graph_attr['dpi'] = '300'
+    elif imageFormat == 'svg':
+        g.graph_attr['dpi'] = '72'
+    g.graph_attr['forcelabels'] = 'true'
+    g.graph_attr['labelloc'] = 't'  # top or 'b'
+    g.graph_attr['label'] = graphTitle
+    g = apply_styles(g, global_styles)
+    r_counter = 1
 
-        # Automatically use scaling factor if flux > 10
-        # (scaling factor is set to the nearest 100)
-        all_f = [abs(f) for f in Pathway.fluxes]
+    # Automatically use scaling factor if flux > 10
+    # (scaling factor is set to the nearest 100)
+    all_f = [abs(f) for f in Pathway.fluxes]
 
-        if max(all_f) > 10:
-            scaleLineWidth = True
-            scalingFactor = 10**(math.ceil(math.log(max(all_f), 10)))
+    if max(all_f) > 10:
+        scaleLineWidth = True
+        scalingFactor = 10**(math.ceil(math.log(max(all_f), 10)))
 
-        for rxn in Pathway.reactions:
+    for rxn in Pathway.reactions:
 
-            g.node(rxn.rid, shape='point',
-                   color=colorConfig['RXN_NODE_COLOR'],
-                   xlabel=rxn.rid + '; ' + str(abs(rxn.flux)),
-                   fontsize=REACTION_FONT_SIZE,
-                   fontcolor=colorConfig['REACTION_COLOR'])
+        g.node(rxn.rid, shape='point',
+               color=colorConfig['RXN_NODE_COLOR'],
+               xlabel=rxn.rid + '; ' + str(abs(rxn.flux)),
+               fontsize=REACTION_FONT_SIZE,
+               fontcolor=colorConfig['REACTION_COLOR'])
 
-            if scaleLineWidth:
-                lineW = '%i' % (10 * abs(rxn.flux) / scalingFactor + 1)
+        if scaleLineWidth:
+            lineW = '%i' % (10 * abs(rxn.flux) / scalingFactor + 1)
 
+        else:
+            if rxn.flux >= 1 or rxn.flux <= -1:
+                lineW = '%s' % (abs(rxn.flux) * 2)
+
+            # penwidth for any flux between -1 < v < 1 is 1.
             else:
-                if rxn.flux >= 1 or rxn.flux <= -1:
-                    lineW = '%s' % (abs(rxn.flux) * 2)
+                lineW = '1'
 
-                # penwidth for any flux between -1 < v < 1 is 1.
+        for met in rxn.reactants:
+            if met in cofactorsList:
+                cf = abs(rxn.metabolites[met])
+                if cf > 1:
+                    # show stoichiometric coefficient only when it is >= 2
+                    clabel = '%i %s' % (cf, kegg_compound[met])
                 else:
-                    lineW = '1'
+                    clabel = kegg_compound[met]
+                g.node(met + '_' + str(r_counter),
+                       shape=colorConfig['COFACTOR_SHAPE'],
+                       color=colorMapping[met], style="filled", label=clabel)
+                g.edge(met + '_' + str(r_counter), rxn.rid, penwidth=lineW,
+                       weight='1', arrowhead="none",
+                       color=colorConfig['EDGE_COLOR'])
+            else:
+                g.node(met, shape=colorConfig['NONCOFACTOR_SHAPE'],
+                       label=kegg_compound[met], fontname=metabolite_fontname,
+                       style="filled", color=colorConfig['NONCOFACTOR_COLOR'])
+                g.edge(met, rxn.rid, penwidth=lineW, weight='2',
+                       arrowhead="none", color=colorConfig['EDGE_COLOR'])
 
-            for met in rxn.reactants:
-                if met in cofactorsList:
-                    cf = abs(rxn.metabolites[met])
-                    if cf > 1:
-                        # show stoichiometric coefficient only when it is >= 2
-                        clabel = '%i %s' % (cf, kegg_compound[met])
-                    else:
-                        clabel = kegg_compound[met]
-                    g.node(met + '_' + str(r_counter),
-                           shape=colorConfig['COFACTOR_SHAPE'],
-                           color=colorMapping[met], style="filled", label=clabel)
-                    g.edge(met + '_' + str(r_counter), rxn.rid, penwidth=lineW,
-                           weight='1', arrowhead="none",
-                           color=colorConfig['EDGE_COLOR'])
+        for met in rxn.products:
+            if met in cofactorsList:
+                cf = abs(rxn.metabolites[met])
+                if cf > 1:
+                    clabel = '%i %s' % (cf, kegg_compound[met])
                 else:
-                    g.node(met, shape=colorConfig['NONCOFACTOR_SHAPE'],
-                           label=kegg_compound[met], fontname=metabolite_fontname,
-                           style="filled", color=colorConfig['NONCOFACTOR_COLOR'])
-                    g.edge(met, rxn.rid, penwidth=lineW, weight='2',
-                           arrowhead="none", color=colorConfig['EDGE_COLOR'])
+                    clabel = kegg_compound[met]
+                g.node(met + '_' + str(r_counter),
+                       shape=colorConfig['COFACTOR_SHAPE'],
+                       color=colorMapping[met], style="filled", label=clabel)
+                g.edge(rxn.rid, met + '_' + str(r_counter), weight='1',
+                       penwidth=lineW, color=colorConfig['EDGE_COLOR'])
+            else:
+                g.node(met, shape=colorConfig['NONCOFACTOR_SHAPE'],
+                       label=kegg_compound[met], fontname=metabolite_fontname,
+                       style="filled", color=colorConfig['NONCOFACTOR_COLOR'])
+                g.edge(rxn.rid, met, penwidth=lineW, weight='2',
+                       color=colorConfig['EDGE_COLOR'])
+        r_counter += 1
 
-            for met in rxn.products:
-                if met in cofactorsList:
-                    cf = abs(rxn.metabolites[met])
-                    if cf > 1:
-                        clabel = '%i %s' % (cf, kegg_compound[met])
-                    else:
-                        clabel = kegg_compound[met]
-                    g.node(met + '_' + str(r_counter),
-                           shape=colorConfig['COFACTOR_SHAPE'],
-                           color=colorMapping[met], style="filled", label=clabel)
-                    g.edge(rxn.rid, met + '_' + str(r_counter), weight='1',
-                           penwidth=lineW, color=colorConfig['EDGE_COLOR'])
-                else:
-                    g.node(met, shape=colorConfig['NONCOFACTOR_SHAPE'],
-                           label=kegg_compound[met], fontname=metabolite_fontname,
-                           style="filled", color=colorConfig['NONCOFACTOR_COLOR'])
-                    g.edge(rxn.rid, met, penwidth=lineW, weight='2',
-                           color=colorConfig['EDGE_COLOR'])
-            r_counter += 1
+    if imageFileName is None:
+        imageFileName = Pathway.name
+    g.render(imageFileName, cleanup=cleanup)
 
-        if imageFileName is None:
-            imageFileName = Pathway.name
-        g.render(imageFileName, cleanup=cleanup)
-
-        return 1  # g.source
-
-
-    def test_drawpathway():
-
-
-
+    return 1  # g.source
 
 if __name__ == "__main__":
 
@@ -635,4 +628,3 @@ if __name__ == "__main__":
                  scaleLineWidth=False, scalingFactor=200.0)
 
     logging.info("Testing drawpathway.py: Pass\n")
-    return None

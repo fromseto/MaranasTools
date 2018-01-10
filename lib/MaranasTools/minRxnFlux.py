@@ -16,6 +16,7 @@ import pdb
 import logging
 import pandas as pd
 import gams_parser
+from drawpath import *
 
 # Global variables/solver options
 EPS = 1e-5
@@ -387,7 +388,7 @@ class MinRxnFlux(object):
         else:
             a = None
             G = None
-        lp_prob.writeLP("./test_OptStoic.lp")
+        # lp_prob.writeLP("./test_OptStoic.lp")
         return lp_prob, v, vf, vb, yf, yb, a, G
 
     def solve(self, exclude_existing_solution=False, outputfile="OptStoic_pulp_result.txt", max_iteration=None):
@@ -525,7 +526,7 @@ def run_minRxnFlux(optSotic_result_dict):
 
     pulp_solver = load_pulp_solver()
 
-    MAX_ITERATION = 10
+    MAX_ITERATION = 1
     USE_LOOPLESS = False
     CLEANUP = True #set to true if you want to delete all .sol and .lp files
 
@@ -550,7 +551,7 @@ def run_minRxnFlux(optSotic_result_dict):
         generate_kegg_model(p, filehandle=f)
         graph_title = "{0}_P{1}".format(p.name, p.id)
         draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
-                    imageFormat='png', graphTitle=graph_title, darkBackgroundMode=False, debug=True)
+                    imageFormat='png', graphTitle=graph_title, debug=True)
     f.close()
     print "Generate kegg_model and draw pathway: Pass!"
 
