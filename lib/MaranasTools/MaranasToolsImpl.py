@@ -6,8 +6,8 @@ from Bio import SeqIO
 from pprint import pprint, pformat
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
-from optSotic import *
-from minRxnFlux import *
+from MaranasTools.optSotic import *
+from MaranasTools.minRxnFlux import *
 #END_HEADER
 
 

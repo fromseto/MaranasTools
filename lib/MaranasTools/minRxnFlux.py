@@ -12,11 +12,11 @@ import copy
 import random
 import string  # to generate random hex code
 import json
-import pdb
+# import pdb
 import logging
 import pandas as pd
-import gams_parser
-from drawpath import *
+import MaranasTools.gams_parser
+from MaranasTools.drawpath import *
 
 # Global variables/solver options
 EPS = 1e-5
