@@ -6,7 +6,6 @@
     "contact": "http://kbase.us/contact-us/",
     "visible": true,
     "categories": ["active", "metabolic_modeling"],
-    "app_type": "editor",
     "widgets": {
         "input": null,
         "output": null
