@@ -15,8 +15,10 @@ import json
 # import pdb
 import logging
 import pandas as pd
-import MaranasTools.gams_parser
-from MaranasTools.drawpath import *
+import sys
+sys.path.append(os.getcwd())
+import gams_parser
+from drawpath import *
 
 # Global variables/solver options
 EPS = 1e-5

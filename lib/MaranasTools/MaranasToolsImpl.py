@@ -6,8 +6,10 @@ from Bio import SeqIO
 from pprint import pprint, pformat
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
-from MaranasTools.optSotic import *
-from MaranasTools.minRxnFlux import *
+import sys
+sys.path.append(os.getcwd())
+from optSotic import *
+from minRxnFlux import *
 #END_HEADER
 
 
