@@ -15,8 +15,8 @@ import json
 # import pdb
 import logging
 import pandas as pd
-import sys
-sys.path.append(os.getcwd())
+# import sys
+# sys.path.append(os.getcwd())
 import gams_parser
 from drawpath import *
 

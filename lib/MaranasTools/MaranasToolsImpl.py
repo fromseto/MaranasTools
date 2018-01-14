@@ -6,9 +6,9 @@ from Bio import SeqIO
 from pprint import pprint, pformat
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
-import sys
-sys.path.append(os.getcwd())
-from optSotic import *
+# import sys
+# sys.path.append(os.getcwd())
+from optStoic import *
 from minRxnFlux import *
 #END_HEADER
 
