@@ -12,7 +12,13 @@ MAINTAINER KBase Developer
 # https library that is out of date in the base image.
 
 RUN pip install coverage
-RUN pip install pulp
+RUN pip install pulp --upgrade
+
+RUN pip install --upgrade setuptools
+RUN apt-get install libffi-dev libssl-dev
+
+RUN pip install pandas --upgrade
+RUN pip install graphviz --upgrade
 
 # update security libraries in the base image
 RUN pip install cffi --upgrade \

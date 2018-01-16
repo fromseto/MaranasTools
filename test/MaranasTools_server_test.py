@@ -133,7 +133,7 @@ class MaranasToolsTest(unittest.TestCase):
     
     def test_run_optstoic(self):
         # inputs = { ... define inputs here ... }
-        inputs = {None}
+        inputs = {"start_compound":"C00267","target_compound":"C00033"}
         print "test_run_optstoic"
         # expected_outputs = { ... defined expected results here ... }
         outputs = self.getImpl().run_optstoic(self.getContext(), inputs)

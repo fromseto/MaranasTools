@@ -1,8 +1,6 @@
 # Author: Chiam Yu Ng, Lin Wang
 
 from __future__ import division
-import sys
-sys.path.append(os.getcwd())
 from config import cofactors, default_params, rxnSji, cofactorsList, kegg_compound
 import os
 from collections import OrderedDict

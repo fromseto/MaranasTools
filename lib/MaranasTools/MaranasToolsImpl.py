@@ -80,7 +80,7 @@ This sample module contains one small method - filter_contigs.
         #BEGIN run_optstoic
         start_compound = params['start_compound']
         target_compound = params['target_compound']
-        stoic_dic = simulate_optStoic(substrate_metabolite, target_metabolite)
+        stoic_dic = simulate_optStoic(start_compound, target_compound)
         run_minRxnFlux(stoic_dic)
         #END run_optstoic
 

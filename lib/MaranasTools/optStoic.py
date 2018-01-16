@@ -8,13 +8,14 @@
 import pulp
 import json
 
-GUROBI_CMD_OPTIONS = [('Threads', 2), ('TimeLimit', 1200), \
-                ('MIPGapAbs', 1e-6), ('MIPGap', 1e-6), ('CliqueCuts', 2)]
-pulp_solver = pulp.solvers.GUROBI_CMD(path=None, keepFiles=0, mip=1, msg=1,
-                options=GUROBI_CMD_OPTIONS)
+# GUROBI_CMD_OPTIONS = [('Threads', 2), ('TimeLimit', 1200), \
+#                 ('MIPGapAbs', 1e-6), ('MIPGap', 1e-6), ('CliqueCuts', 2)]
+# pulp_solver = pulp.solvers.GUROBI_CMD(path=None, keepFiles=0, mip=1, msg=1,
+#                 options=GUROBI_CMD_OPTIONS)
+pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
 def simulate_optStoic(substrate_metabolite, target_metabolite):
-    met_S = json.load(open("../../data/met_details_dict_v2.json"))
+    met_S = json.load(open("/kb/module/data/met_details_dict_v2.json"))
     # print met_S['C00001']
     metabolites = met_S.keys()
     # substrate_metabolite = "C00267"
