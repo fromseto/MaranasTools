@@ -51,7 +51,8 @@ class MaranasTools(object):
            compound that exists either in the model or in the biochemistry.),
            parameter "max_steps" of Long, parameter "use_heterologous_steps"
            of type "boolean" (A boolean - 0=false, 1=true @range (0, 1)),
-           parameter "dG_threshold" of Double
+           parameter "dG_threshold" of Double, parameter "workspace_name" of
+           String
         :returns: instance of type "OptStoicOutput" (report_name - name of
            the report object that gets generated. report_ref - UPA of the
            report object that gets generated.) -> structure: parameter

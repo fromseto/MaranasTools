@@ -6,6 +6,8 @@ from Bio import SeqIO
 from pprint import pprint, pformat
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
+# import sys
+# sys.path.append(os.getcwd())
 from optStoic import *
 from minRxnFlux import *
 #END_HEADER
@@ -32,15 +34,19 @@ This sample module contains one small method - filter_contigs.
     GIT_COMMIT_HASH = "ef47fe67244604b4009066f10f0b338c0f98af49"
 
     #BEGIN_CLASS_HEADER
+    # Class variables and functions can be defined in this block
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
     # be found
     def __init__(self, config):
         #BEGIN_CONSTRUCTOR
+        
+        # Any configuration parameters that are important should be parsed and
+        # saved in the constructor.
         self.callback_url = os.environ['SDK_CALLBACK_URL']
-        self.config = config
         self.shared_folder = config['scratch']
+
         #END_CONSTRUCTOR
         pass
 
@@ -75,9 +81,9 @@ This sample module contains one small method - filter_contigs.
         #BEGIN run_optstoic
         start_compound = params['start_compound']
         target_compound = params['target_compound']
-        # workspace_name = params['workspace_name']
+        workspace_name = params['workspace_name']
         stoic_dic = simulate_optStoic(start_compound, target_compound)
-        output = run_minRxnFlux(stoic_dic, self.config, params)
+        output = run_minRxnFlux(stoic_dic,self.config,workspace_name)
         #END run_optstoic
 
         # At some point might do deeper type checking...

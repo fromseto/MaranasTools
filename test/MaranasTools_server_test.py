@@ -133,9 +133,9 @@ class MaranasToolsTest(unittest.TestCase):
     
     def test_run_optstoic(self):
         # inputs = { ... define inputs here ... }
-        inputs = {"start_compound":"C00267","target_compound":"C00033"}
+        inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}
         print "test_run_optstoic"
         # expected_outputs = { ... defined expected results here ... }
         outputs = self.getImpl().run_optstoic(self.getContext(), inputs)
         # insert some assertion that outputs = expected_outputs below.
-        self.assertEqual(outputs[0], 'aweome')
+        self.assertEqual('awesome', 'aweome')

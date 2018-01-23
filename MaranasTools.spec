@@ -33,6 +33,7 @@ module MaranasTools {
         int max_steps;
         boolean use_heterologous_steps;
         float dG_threshold; /* advanced */
+        string workspace_name;
     } OptStoicParams;
 
     /*

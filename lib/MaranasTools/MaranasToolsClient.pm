@@ -129,6 +129,7 @@ OptStoicParams is a reference to a hash where the following keys are defined:
 	max_steps has a value which is an int
 	use_heterologous_steps has a value which is a MaranasTools.boolean
 	dG_threshold has a value which is a float
+	workspace_name has a value which is a string
 model_upa is a string
 compound_id is a string
 boolean is an int
@@ -151,6 +152,7 @@ OptStoicParams is a reference to a hash where the following keys are defined:
 	max_steps has a value which is an int
 	use_heterologous_steps has a value which is a MaranasTools.boolean
 	dG_threshold has a value which is a float
+	workspace_name has a value which is a string
 model_upa is a string
 compound_id is a string
 boolean is an int
@@ -427,6 +429,7 @@ target_compound has a value which is a MaranasTools.compound_id
 max_steps has a value which is an int
 use_heterologous_steps has a value which is a MaranasTools.boolean
 dG_threshold has a value which is a float
+workspace_name has a value which is a string
 
 </pre>
 
@@ -441,6 +444,7 @@ target_compound has a value which is a MaranasTools.compound_id
 max_steps has a value which is an int
 use_heterologous_steps has a value which is a MaranasTools.boolean
 dG_threshold has a value which is a float
+workspace_name has a value which is a string
 
 
 =end text

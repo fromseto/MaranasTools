@@ -32,7 +32,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "target_compound",
     "max_steps",
     "use_heterologous_steps",
-    "dG_threshold"
+    "dG_threshold",
+    "workspace_name"
 })
 public class OptStoicParams {
 
@@ -48,6 +49,8 @@ public class OptStoicParams {
     private Long useHeterologousSteps;
     @JsonProperty("dG_threshold")
     private Double dGThreshold;
+    @JsonProperty("workspace_name")
+    private String workspaceName;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("model")
@@ -140,6 +143,21 @@ public class OptStoicParams {
         return this;
     }
 
+    @JsonProperty("workspace_name")
+    public String getWorkspaceName() {
+        return workspaceName;
+    }
+
+    @JsonProperty("workspace_name")
+    public void setWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
+    }
+
+    public OptStoicParams withWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
+        return this;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -152,7 +170,7 @@ public class OptStoicParams {
 
     @Override
     public String toString() {
-        return ((((((((((((((("OptStoicParams"+" [model=")+ model)+", startCompound=")+ startCompound)+", targetCompound=")+ targetCompound)+", maxSteps=")+ maxSteps)+", useHeterologousSteps=")+ useHeterologousSteps)+", dGThreshold=")+ dGThreshold)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((("OptStoicParams"+" [model=")+ model)+", startCompound=")+ startCompound)+", targetCompound=")+ targetCompound)+", maxSteps=")+ maxSteps)+", useHeterologousSteps=")+ useHeterologousSteps)+", dGThreshold=")+ dGThreshold)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

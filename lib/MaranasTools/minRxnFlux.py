@@ -19,6 +19,7 @@ import pandas as pd
 # sys.path.append(os.getcwd())
 import gams_parser
 from drawpath import *
+from CreateReport import CreateReport
 
 # Global variables/solver options
 EPS = 1e-5
@@ -27,8 +28,8 @@ GUROBI_OPTIONS = 'Threads=2 TimeLimit=1800 MIPGapAbs=1e-6 MIPGap=1e-6 CliqueCuts
 current_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.normpath(os.path.join(
     current_dir, '../../data/'))
-res_dir = os.path.normpath(os.path.join(
-    current_dir, '../../data/','out'))
+# res_dir = os.path.normpath(os.path.join(
+#     current_dir, '../../data/','out'))
 
 # "linux2" is the platform for lxcluster/hammer
 # if sys.platform == 'cygwin' and sys.platform =='linux2':
@@ -512,7 +513,33 @@ class MinRxnFlux(object):
     def __repr__(self):
         return "<OptStoic(objective='%s')>" % (self.objective)
 
-def run_minRxnFlux(optSotic_result_dict):
+
+def cleanup(directory=None):
+    """
+    Clean up after the job.  At the moment this just means removing the working
+    directory, but later could mean other things.
+    """
+
+    try:
+        shutil.rmtree(directory, ignore_errors=True)  # it would not delete if fold is not empty
+        # need to iterate each entry
+    except IOError, e:
+        log("Unable to remove working directory {0}".format(directory))
+        raise
+
+def setupWorkingDir(directory=None):
+    """
+    Clean up an existing workingdir and create a new one
+    """
+    try:
+        if os.path.exists(directory):
+            _cleanup(directory)
+        os.mkdir(directory)
+    except IOError:
+        log("Unable to setup working dir {0}".format(directory))
+        raise
+
+def run_minRxnFlux(optSotic_result_dict,config,params):
     db = load_db_rxns(data_dir,optSotic_result_dict)
     logging.info("Database loaded!")
 
@@ -532,6 +559,10 @@ def run_minRxnFlux(optSotic_result_dict):
     USE_LOOPLESS = False
     CLEANUP = True #set to true if you want to delete all .sol and .lp files
 
+    res_dir = os.path.join(config['scratch'], "optstoic_out")
+    # log("optStoic output dir is {0}".format(res_dir))
+    setupWorkingDir(res_dir)
+
     test = MinRxnFlux(db, objective='MinFlux',
                     specific_bounds=specific_bounds,
                     max_iteration=MAX_ITERATION,
@@ -540,22 +571,30 @@ def run_minRxnFlux(optSotic_result_dict):
                     result_filepath=res_dir,
                     M=1000)
 
-    lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
+    # #### solve and draw pathway to figures
+    # lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
 
-    # Creating kegg model and drawing pathways
-    f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
-    pathway_objects = []
+    # # Creating kegg model and drawing pathways
+    # f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
+    # pathway_objects = []
 
-    for ind, res in sorted(test.pathways.iteritems()):
-        p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
-        p.rearrange_reaction_order()
-        pathway_objects.append(p)
-        generate_kegg_model(p, filehandle=f)
-        graph_title = "{0}_P{1}".format(p.name, p.id)
-        draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
-                    imageFormat='png', graphTitle=graph_title, debug=True)
-    f.close()
-    print "Generate kegg_model and draw pathway: Pass!"
+    # for ind, res in sorted(test.pathways.iteritems()):
+    #     p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
+    #     p.rearrange_reaction_order()
+    #     pathway_objects.append(p)
+    #     generate_kegg_model(p, filehandle=f)
+    #     graph_title = "{0}_P{1}".format(p.name, p.id)
+    #     # draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+    #     #             imageFormat='png', graphTitle=graph_title, debug=True)
+    #     draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+    #                 imageFormat='png', graphTitle=graph_title, debug=True)
+    # f.close()
+    # print "Generate kegg_model and draw pathway: Pass!"
+
+    callback_url = os.environ['SDK_CALLBACK_URL']
+    report_maker = CreateReport(callback_url, config['scratch'])
+    result = report_maker.run(params)
+    return result
 
 def load_db_rxns(data_dir,optSotic_result_dict):
 

@@ -141,6 +141,10 @@
                 {
                     "input_parameter": "dG_threshold",
                     "target_property": "dG_threshold"
+                },
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property" : "workspace_name"
                 }
             ],
             "output_mapping": [
