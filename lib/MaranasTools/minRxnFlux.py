@@ -20,6 +20,7 @@ import pandas as pd
 import gams_parser
 from drawpath import *
 from CreateReport import CreateReport
+from pulp_scip import SCIP_CMD 
 
 # Global variables/solver options
 EPS = 1e-5
@@ -462,7 +463,7 @@ class MinRxnFlux(object):
                             res['flux'].append(v[j].varValue)
                             result_output.write("%s %.8f\n" %(v[j].name, v[j].varValue))
 
-                result_output.write("%s = %.8f\n" % (self.objective, pulp.value(lp_prob.objective)))
+                # result_output.write("%s = %.8f\n" % (self.objective, pulp.value(lp_prob.objective)))
                 result_output.write("----------------------------------\n\n")
 
                 integer_cut_reactions = list(set(res['reaction_id']) - set(self.database.user_defined_export_rxns))
@@ -553,7 +554,9 @@ def run_minRxnFlux(optSotic_result_dict,config,params):
         else:
             specific_bounds['EX_'+met] = {'LB': stoich, 'UB': stoich}
 
-    pulp_solver = load_pulp_solver()
+    # pulp_solver = load_pulp_solver()
+    pulp_solver = SCIP_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
+
 
     MAX_ITERATION = 1
     USE_LOOPLESS = False
@@ -571,25 +574,25 @@ def run_minRxnFlux(optSotic_result_dict,config,params):
                     result_filepath=res_dir,
                     M=1000)
 
-    # #### solve and draw pathway to figures
-    # lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
+    #### solve and draw pathway to figures
+    lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
 
-    # # Creating kegg model and drawing pathways
-    # f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
-    # pathway_objects = []
+    # Creating kegg model and drawing pathways
+    f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
+    pathway_objects = []
 
-    # for ind, res in sorted(test.pathways.iteritems()):
-    #     p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
-    #     p.rearrange_reaction_order()
-    #     pathway_objects.append(p)
-    #     generate_kegg_model(p, filehandle=f)
-    #     graph_title = "{0}_P{1}".format(p.name, p.id)
-    #     # draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
-    #     #             imageFormat='png', graphTitle=graph_title, debug=True)
-    #     draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
-    #                 imageFormat='png', graphTitle=graph_title, debug=True)
-    # f.close()
-    # print "Generate kegg_model and draw pathway: Pass!"
+    for ind, res in sorted(test.pathways.iteritems()):
+        p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
+        p.rearrange_reaction_order()
+        pathway_objects.append(p)
+        generate_kegg_model(p, filehandle=f)
+        graph_title = "{0}_P{1}".format(p.name, p.id)
+        # draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+        #             imageFormat='png', graphTitle=graph_title, debug=True)
+        draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+                    imageFormat='png', graphTitle=graph_title, debug=True)
+    f.close()
+    print "Generate kegg_model and draw pathway: Pass!"
 
     callback_url = os.environ['SDK_CALLBACK_URL']
     report_maker = CreateReport(callback_url, config['scratch'])
