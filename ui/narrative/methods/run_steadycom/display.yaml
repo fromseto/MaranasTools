@@ -28,7 +28,7 @@ parameters :
             Fixed growth rate
         short-hint : |
             (optional) Fixed growth rate for the given model.
-    medium :
+    medium_upa :
         ui-name : |
             Growth medium
         short-hint : |

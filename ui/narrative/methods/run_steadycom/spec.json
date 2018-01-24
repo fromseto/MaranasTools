@@ -34,7 +34,7 @@
             }
         },
         {
-            "id": "medium",
+            "id": "medium_upa",
             "optional": true,
             "advanced": false,
             "allow_multiple": false,
@@ -76,8 +76,8 @@
                     "target_property": "model_inputs"
                 },
                 {
-                    "input_parameter": "medium",
-                    "target_property": "medium"
+                    "input_parameter": "medium_upa",
+                    "target_property": "medium_upa"
                 },
                 {
                     "narrative_system_variable": "workspace_name",
@@ -99,7 +99,7 @@
                 },
                 {
                     "service_method_output_path": [0,"flux_output"],
-                    "target_property": "out_value"
+                    "target_property": "flux_output"
                 }
             ]
         }
