@@ -130,8 +130,10 @@ class MaranasToolsTest(unittest.TestCase):
     #                                        'assembly_input_ref': '1/fake/3',
     #                                        'min_length': 'ten'})
     #     self.assertIn('Cannot parse integer from min_length parameter', str(errorContext.exception))
-    
+
+    @unittest.skip('skipping optstoic test')
     def test_run_optstoic(self):
+        pass
         # inputs = { ... define inputs here ... }
         inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}
         print "test_run_optstoic"
