@@ -1,0 +1,50 @@
+name: Run SteadyCom
+tooltip: |
+    Run SteadyCom
+screenshots: []
+
+icon:
+
+suggestions:
+    apps:
+        related:
+            []
+        next:
+            []
+    methods:
+        related:
+            []
+        next:
+            []
+
+parameters :
+    model_upa :
+        ui-name : |
+            An FBA Model
+        short-hint : |
+            A file input for testing.
+    fixed_gr :
+        ui-name : |
+            Fixed growth rate
+        short-hint : |
+            (optional) Fixed growth rate for the given model.
+    medium_upa :
+        ui-name : |
+            Growth medium
+        short-hint : |
+            (optional) The medium for growing the set of models.
+    flux_output :
+        ui-name : |
+            SteadyCom Output
+        short-hint : |
+            The output from SteadyCom, represented as a set of fluxes and optimal community growth rate
+
+parameter-groups :
+    model_inputs:
+        ui-name : |
+            Model Information
+        short-hint : |
+            A list of models with their (optional) maximum growth rates
+description : |
+    <p>Calculate maximum growth rate, fluxes, and pareto optimality for a set of FBA models growing
+    under some medium condition.</p>
