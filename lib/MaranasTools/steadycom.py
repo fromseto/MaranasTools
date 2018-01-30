@@ -38,8 +38,10 @@ def parse_equation(equation):
 
 def build_s_matrix(df):
     s_matrix = dict()
+    reactions = []
     for i in range(len(df)):
         rxn = df.id[i]
+        reactions.append(rxn)
         try:
             reactants = parse_equation(df.equation[i])
         except:
@@ -51,29 +53,48 @@ def build_s_matrix(df):
             if rxn not in s_matrix[cpd['cpd']]:
                 s_matrix[cpd['cpd']][rxn] = dict()
             s_matrix[cpd['cpd']][rxn] = cpd['stoich']
-    return s_matrix
+    return s_matrix,reactions
 
 def loop_for_steadycom(param):
     mu = 0.5
     X0 = 0.5 ## what is the value for x_o?
 
-    mu_bounds = {}
-    mu_bounds['LB'] = None
-    mu_bounds['UB'] = None
-    while mu_bounds['LB'] is not None and mu_bounds['UB'] is not None:
-        obj_val = simulate_steadycom(param,mu)
+    # mu_bounds = {}
+    # mu_bounds['LB'] = None
+    # mu_bounds['UB'] = None
+    LB = None
+    UB = None
+    lp_prob = simulate_steadycom(param,mu)
+    # solve the model
+    pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
+
+    # solve for growth rate
+    while LB is not None 
+            and UB is not None 
+            and abs(LB-UB) < 0.00001:
+
+        lp_prob.solve(pulp_solver)
+        obj_val = pulp.value(lp_prob.objective)
+
+        X0 = 1 # total biomass (scale to 1 so that each X_k is relative abundance)
         if obj_val >= X0:
-            mu_bounds['LB'] = mu
+            # mu_bounds['LB'] = mu
+            LB = mu
             mu = max(obj_val/X0,1.01)
         else:
-            mu_bounds['UB'] = mu
-            mu = max(obj_val/X0,0.09)
+            # mu_bounds['UB'] = mu
+            UB = mu
+            mu = max(obj_val/X0,0.99)
 
-    # root finding algorithm? what does it mean
-    # why not just do a bisection search to find mu
+        # change the constraint including growth rate (mu)
+        # lp_prob[""] = ...
+
+    # solve FVA
+    # change the objective function to each flux
+    # lp_prob[""] = ...
 
 
-def simulate_steadycom(param,mu):
+def construct_steadycom(param,mu):
 
     model_inputs = param['model_inputs']
 
@@ -86,9 +107,12 @@ def simulate_steadycom(param,mu):
                                                # then when you need the files
 
     S = {} # build S matrix for each FBA model k
+
+    # define sets for steadycom
     reactions = {} # get reaction info for each FBA model k
     metabolites = {} # get metaboite info for each FBA model k
-    
+    organisms = []
+
     for model_input in model_inputs:
         model_upa = model_input['model_upa']
         files = fba_client.model_to_tsv_file({
@@ -105,8 +129,14 @@ def simulate_steadycom(param,mu):
         
         model_file = files['reactions_file']['path']
         model_df = pd.read_table(model_file)
-        Sij = build_s_matrix(model_df)
-        organism_id = model_upa['id']
+        Sij,reactions = build_s_matrix(model_df)
+        k = model_upa['id']
+        organisms.append(k)
+        S[k] = Sij
+        metabolites[k] = Sij.keys()
+        reactions[k] = reactions
+        reactions_EX[k] = 
+        reactions_biomass[k] = 
 
         # for model_input in model_inputs:
         #     GSM = model_input['model_upa']
@@ -124,15 +154,15 @@ def simulate_steadycom(param,mu):
         #             S_matrix_ji[modelreaction][met] = reagent['coefficient']
 
         #     S_matrix_ij = S_matrix_ji.transpose()
-        S[organism_id] = Sij
 
 
     #------- define variables
     X = pulp.LpVariable.dicts("X", organisms,
                               lowBound=0, upBound=1, cat='Continuous')
-    v = pulp.LpVariable.dicts("v", (reactions,organisms),
+
+    for k in organisms:
+        v = pulp.LpVariable.dicts("v", (k,reactions[k]),
                               lowBound=-M, upBound=M, cat='Continuous')
-    # mu = pulp.LpVariable("mu", lowBound=0, upBound=1, cat='Continuous')
 
     #------- define LP problem
     lp_prob = pulp.LpProblem("SteadyCom", pulp.LpMaximize)
@@ -144,21 +174,17 @@ def simulate_steadycom(param,mu):
     for k in organisms:
         for i in S[k].keys():
             dot_S_v = pulp.lpSum([S[k][i][j] * v[k][j]
-                                  for j in S[k][i].keys()])
+                                  for j in reactions[k]])
             condition = dot_S_v == 0
             lp_prob += condition#, label  
 
-            for j in S[k][i].keys():
+            for j in reactions[k]:
                 lp_prob += v[k][j] <= UB[k][j] * X[k]
                 lp_prob += v[k][j] >= LB[k][j] * X[k]
 
-            lp_prob += v['bio1'][k] - X[k]*mu
+        lp_prob += v['bio1'][k] - X[k]*mu
 
     # constraints for medium (joshua: please add it here)
     
 
-    # solve the model
-    pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
-    lp_prob.solve(pulp_solver)
-    objective_val = pulp.value(lp_prob.objective)
-    return objective_val
+    return lp_prob
