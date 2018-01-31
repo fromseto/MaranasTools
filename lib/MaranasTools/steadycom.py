@@ -39,6 +39,7 @@ def parse_equation(equation):
 def build_s_matrix(df):
     s_matrix = dict()
     reactions = []
+    metabolites_EX = []
     for i in range(len(df)):
         rxn = df.id[i]
         reactions.append(rxn)
@@ -53,7 +54,9 @@ def build_s_matrix(df):
             if rxn not in s_matrix[cpd['cpd']]:
                 s_matrix[cpd['cpd']][rxn] = dict()
             s_matrix[cpd['cpd']][rxn] = cpd['stoich']
-    return s_matrix,reactions
+
+            if 'e' in cpd['compartment']: metabolites_EX.append(cpd['cpd'])
+    return s_matrix,reactions,set(metabolites_EX)
 
 def loop_for_steadycom(param):
     mu = 0.5
@@ -110,8 +113,16 @@ def construct_steadycom(param,mu):
 
     # define sets for steadycom
     reactions = {} # get reaction info for each FBA model k
+    reactions_EX = {}
+    reactions_biomass = {}
+
     metabolites = {} # get metaboite info for each FBA model k
+    metabolites_EX = {}
     organisms = []
+    metabolites_com = []
+    for k,met_list in metabolites_EX.iteritems():
+        metabolites_com = metabolites_com + met_list
+    metabolites_com = set(metabolites_com)
 
     for model_input in model_inputs:
         model_upa = model_input['model_upa']
@@ -129,32 +140,16 @@ def construct_steadycom(param,mu):
         
         model_file = files['reactions_file']['path']
         model_df = pd.read_table(model_file)
-        Sij,reactions = build_s_matrix(model_df)
+
+        Sij,reactions,mets_EX = build_s_matrix(model_df)
+
         k = model_upa['id']
         organisms.append(k)
         S[k] = Sij
         metabolites[k] = Sij.keys()
         reactions[k] = reactions
-        reactions_EX[k] = 
-        reactions_biomass[k] = 
-
-        # for model_input in model_inputs:
-        #     GSM = model_input['model_upa']
-
-        #     organism_id = GSM['id']
-        #     modelreactions = GSM['modelreactions']
-        #     modelcompounds = GSM['modelcompounds']
-
-        #     S_matrix_ji = []
-        #     for modelreaction in modelcompounds: # j
-        #         S_matrix_ji[modelreaction] = {}
-        #         reagents = modelreaction['modelReactionReagents']
-        #         for reagent in reagents: # i
-        #             met = reagent['modelcompound_ref']
-        #             S_matrix_ji[modelreaction][met] = reagent['coefficient']
-
-        #     S_matrix_ij = S_matrix_ji.transpose()
-
+        reactions_biomass[k] = model_upa['biomasses'][0].id
+        metabolites_EX[k] = mets_EX
 
     #------- define variables
     X = pulp.LpVariable.dicts("X", organisms,
@@ -163,6 +158,10 @@ def construct_steadycom(param,mu):
     for k in organisms:
         v = pulp.LpVariable.dicts("v", (k,reactions[k]),
                               lowBound=-M, upBound=M, cat='Continuous')
+        vex = pulp.LpVariable.dicts("vex", (k,metabolites_com),
+                              lowBound=-M, upBound=M, cat='Continuous')
+    e = pulp.LpVariable.dicts("e", metabolites_com,
+                              lowBound=0, upBound=M, cat='Continuous')
 
     #------- define LP problem
     lp_prob = pulp.LpProblem("SteadyCom", pulp.LpMaximize)
@@ -175,16 +174,32 @@ def construct_steadycom(param,mu):
         for i in S[k].keys():
             dot_S_v = pulp.lpSum([S[k][i][j] * v[k][j]
                                   for j in reactions[k]])
-            condition = dot_S_v == 0
+            if i in metabolites_EX[k]:
+                condition = dot_S_v == vex[k][i]
+            else
+                condition = dot_S_v == 0
             lp_prob += condition#, label  
 
             for j in reactions[k]:
                 lp_prob += v[k][j] <= UB[k][j] * X[k]
                 lp_prob += v[k][j] >= LB[k][j] * X[k]
 
-        lp_prob += v['bio1'][k] - X[k]*mu
+        biomass_label = 'biomass_'+k
+        lp_prob += pulp.lpSum([v[k][bio_id] - X[k]*mu 
+                            for bio_id in reactions_biomass[k]]), biomass_label
+
 
     # constraints for medium (joshua: please add it here)
-    
+    for i in metabolites_com:
+        # some exchange does not actually exist
+        for k in organisms:
+            if i not in metabolites_EX[i]:
+                lp_prob += vex[k][i] == 0
 
+        community_constraint = pulp.lpSum(vex[k][i] for k in organisms)
+        if i in media:
+            condition_comm = community_constraint - e[i] >= -media[i]
+        else:
+            condition_comm = community_constraint - e[i] == 0
+        lp_prob += condition_comm
     return lp_prob
