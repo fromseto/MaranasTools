@@ -59,8 +59,7 @@ def build_s_matrix(df):
     return s_matrix,reactions,set(metabolites_EX)
 
 def loop_for_steadycom(param):
-    mu = 0.5
-    X0 = 0.5 ## what is the value for x_o?
+    mu = 0.1
     LB = None
     UB = None
 
@@ -69,10 +68,7 @@ def loop_for_steadycom(param):
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
     # solve for growth rate
-    while LB is not None 
-            and UB is not None 
-            and abs(LB-UB) < 0.00001:
-
+    while (LB != None) and (UB != None) and (abs(LB-UB) < 0.00001):
         # add constraints based on growth rate
         for bio_id in reactions_biomass[k]:
             lp_prob += v[k][bio_id] - X[k]*mu == 0
@@ -90,10 +86,6 @@ def loop_for_steadycom(param):
             # mu_bounds['UB'] = mu
             UB = mu
             mu = max(obj_val/X0,0.99)*mu
-
-        # change the constraint including growth rate (mu)
-        for biomass_label in biomass_labels:
-        lp_prob.constraints[biomass_label].changeRHS(mu)
 
 def construct_steadycom(param,mu):
 
@@ -177,7 +169,7 @@ def construct_steadycom(param,mu):
     lp_prob = pulp.LpProblem("SteadyCom", pulp.LpMaximize)
 
     #------- define objective function
-        lp_prob += pulp.lpSum([X[k] for k in organisms])
+    lp_prob += pulp.lpSum([X[k] for k in organisms])
 
     biomass_labels = []
     # define flux balance constraints
@@ -187,7 +179,7 @@ def construct_steadycom(param,mu):
                                   for j in reactions[k]])
             if i in metabolites_EX[k]:
                 condition = dot_S_v == vex[k][i]
-            else
+            else:
                 condition = dot_S_v == 0
             lp_prob += condition#, label  
 
@@ -209,3 +201,6 @@ def construct_steadycom(param,mu):
             condition_comm = community_constraint - e[i] == 0
         lp_prob += condition_comm
     return lp_prob,v,X,k,reactions_biomass
+
+if __name__ == '__main__':
+    loop_for_steadycom(None)

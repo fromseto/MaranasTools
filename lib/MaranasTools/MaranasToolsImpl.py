@@ -8,6 +8,7 @@ from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
 from optStoic import *
 from minRxnFlux import *
+from steadycom import loop_for_steadycom
 #END_HEADER
 
 
@@ -101,6 +102,7 @@ This sample module contains one small method - filter_contigs.
         # ctx is the context object
         # return variables are: returnVal
         #BEGIN run_steadycom
+        returnVal = loop_for_steadycom(params)
         #END run_steadycom
 
         # At some point might do deeper type checking...
