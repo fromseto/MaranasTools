@@ -90,7 +90,7 @@ def loop_for_steadycom(param):
 def construct_steadycom(param,mu):
 
     model_inputs = param['model_inputs']
-    media = param['media']
+    media = param['medium_upa']
     media_metabolites = media['mediacompounds']
     media_dict = {}
     for met_info in media_metabolites:
