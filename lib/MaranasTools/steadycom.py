@@ -63,7 +63,7 @@ def loop_for_steadycom(param):
     LB = None
     UB = None
 
-    lp_prob,v,X,k,reactions_biomass = simulate_steadycom(param,mu)
+    lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu)
     # solve the model
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 

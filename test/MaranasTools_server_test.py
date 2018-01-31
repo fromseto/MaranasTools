@@ -131,14 +131,27 @@ class MaranasToolsTest(unittest.TestCase):
     #                                        'min_length': 'ten'})
     #     self.assertIn('Cannot parse integer from min_length parameter', str(errorContext.exception))
 
+    # @unittest.skip('skipping optstoic test')
+    # def test_run_optstoic(self):
+    #     pass
+    #     # inputs = { ... define inputs here ... }
+    #     inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}
+    #     print "test_run_optstoic"
+    #     # expected_outputs = { ... defined expected results here ... }
+    #     outputs = self.getImpl().run_optstoic(self.getContext(), inputs)[0]
+    #     # insert some assertion that outputs = expected_outputs below.
+    #     # self.assertEqual('awesome', 'aweome')
+    #     print(outputs)
+    #     self.assertIn('report_name', outputs)
+    #     self.assertIn('report_ref', outputs)
+
     @unittest.skip('skipping optstoic test')
-    def test_run_optstoic(self):
-        pass
+    def test_run_steadycom(self):
         # inputs = { ... define inputs here ... }
-        inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}
-        print "test_run_optstoic"
+        inputs = {"workspace_name":self.getWsName()}
+        print "test_run_steadycom"
         # expected_outputs = { ... defined expected results here ... }
-        outputs = self.getImpl().run_optstoic(self.getContext(), inputs)[0]
+        outputs = self.getImpl().run_steadycom(self.getContext(), inputs)[0]
         # insert some assertion that outputs = expected_outputs below.
         # self.assertEqual('awesome', 'aweome')
         print(outputs)
