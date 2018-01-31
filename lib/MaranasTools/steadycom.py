@@ -91,7 +91,8 @@ def construct_steadycom(param,mu):
 
     model_inputs = param['model_inputs']
     media = param['medium_upa']
-    media_metabolites = media['mediacompounds']
+    print meida
+    media_metabolites = media['data'][0]['data']['mediacompounds']
     media_dict = {}
     for met_info in media_metabolites:
         media_dict[met_info["id"]] = met_info["maxFlux"]
