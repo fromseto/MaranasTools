@@ -11,6 +11,7 @@ from fba_tools.fba_toolsClient import fba_tools
 import os
 import pandas as pd
 import re
+from Workspace.WorkspaceClient import Workspace as workspaceService
 
 def parse_reactant(reactant, sign):
     """
@@ -58,12 +59,12 @@ def build_s_matrix(df):
             if 'e' in cpd['compartment']: metabolites_EX.append(cpd['cpd'])
     return s_matrix,reactions,set(metabolites_EX)
 
-def loop_for_steadycom(param):
+def loop_for_steadycom(param,config):
     mu = 0.1
     LB = None
     UB = None
 
-    lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu)
+    lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu,config)
     # solve the model
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
@@ -87,12 +88,15 @@ def loop_for_steadycom(param):
             UB = mu
             mu = max(obj_val/X0,0.99)*mu
 
-def construct_steadycom(param,mu):
+def construct_steadycom(param,mu,config):
 
     model_inputs = param['model_inputs']
     media = param['medium_upa']
     print media
-    media_metabolites = media['data'][0]['data']['mediacompounds']
+    ws = workspaceService(config['workspace-url'])
+    meida_object = ws.get_objects2({'objects': [{'name': media}]})
+    print meida_object
+    media_metabolites = meida_object['data'][0]['data']['mediacompounds']
     media_dict = {}
     for met_info in media_metabolites:
         media_dict[met_info["id"]] = met_info["maxFlux"]
