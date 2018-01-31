@@ -61,13 +61,10 @@ def build_s_matrix(df):
 def loop_for_steadycom(param):
     mu = 0.5
     X0 = 0.5 ## what is the value for x_o?
-
-    # mu_bounds = {}
-    # mu_bounds['LB'] = None
-    # mu_bounds['UB'] = None
     LB = None
     UB = None
-    lp_prob = simulate_steadycom(param,mu)
+
+    lp_prob,v,X,k,reactions_biomass = simulate_steadycom(param,mu)
     # solve the model
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
@@ -76,6 +73,11 @@ def loop_for_steadycom(param):
             and UB is not None 
             and abs(LB-UB) < 0.00001:
 
+        # add constraints based on growth rate
+        for bio_id in reactions_biomass[k]:
+            lp_prob += v[k][bio_id] - X[k]*mu == 0
+                            
+        
         lp_prob.solve(pulp_solver)
         obj_val = pulp.value(lp_prob.objective)
 
@@ -83,23 +85,25 @@ def loop_for_steadycom(param):
         if obj_val >= X0:
             # mu_bounds['LB'] = mu
             LB = mu
-            mu = max(obj_val/X0,1.01)
+            mu = max(obj_val/X0,1.01)*mu
         else:
             # mu_bounds['UB'] = mu
             UB = mu
-            mu = max(obj_val/X0,0.99)
+            mu = max(obj_val/X0,0.99)*mu
 
         # change the constraint including growth rate (mu)
-        # lp_prob[""] = ...
-
-    # solve FVA
-    # change the objective function to each flux
-    # lp_prob[""] = ...
-
+        for biomass_label in biomass_labels:
+        lp_prob.constraints[biomass_label].changeRHS(mu)
 
 def construct_steadycom(param,mu):
 
     model_inputs = param['model_inputs']
+    media = param['media']
+    media_metabolites = media['mediacompounds']
+    media_dict = {}
+    for met_info in media_metabolites:
+        media_dict[met_info["id"]] = met_info["maxFlux"]
+
 
     # fetch information of S matrix for each organism k
     # k: index of organism
@@ -119,10 +123,16 @@ def construct_steadycom(param,mu):
     metabolites = {} # get metaboite info for each FBA model k
     metabolites_EX = {}
     organisms = []
+    
     metabolites_com = []
     for k,met_list in metabolites_EX.iteritems():
         metabolites_com = metabolites_com + met_list
     metabolites_com = set(metabolites_com)
+    
+    reactions_all = []
+    for k,rxn_list in reactions.iteritems():
+        reactions_all = reactions_all + rxn_list
+    reactions_all = set(reactions_all)
 
     for model_input in model_inputs:
         model_upa = model_input['model_upa']
@@ -155,11 +165,11 @@ def construct_steadycom(param,mu):
     X = pulp.LpVariable.dicts("X", organisms,
                               lowBound=0, upBound=1, cat='Continuous')
 
-    for k in organisms:
-        v = pulp.LpVariable.dicts("v", (k,reactions[k]),
-                              lowBound=-M, upBound=M, cat='Continuous')
-        vex = pulp.LpVariable.dicts("vex", (k,metabolites_com),
-                              lowBound=-M, upBound=M, cat='Continuous')
+    # for k in organisms:
+    v = pulp.LpVariable.dicts("v", (organisms,reactions_all),
+                          lowBound=-M, upBound=M, cat='Continuous')
+    vex = pulp.LpVariable.dicts("vex", (organisms,metabolites_com),
+                          lowBound=-M, upBound=M, cat='Continuous')
     e = pulp.LpVariable.dicts("e", metabolites_com,
                               lowBound=0, upBound=M, cat='Continuous')
 
@@ -169,6 +179,7 @@ def construct_steadycom(param,mu):
     #------- define objective function
         lp_prob += pulp.lpSum([X[k] for k in organisms])
 
+    biomass_labels = []
     # define flux balance constraints
     for k in organisms:
         for i in S[k].keys():
@@ -184,11 +195,6 @@ def construct_steadycom(param,mu):
                 lp_prob += v[k][j] <= UB[k][j] * X[k]
                 lp_prob += v[k][j] >= LB[k][j] * X[k]
 
-        biomass_label = 'biomass_'+k
-        lp_prob += pulp.lpSum([v[k][bio_id] - X[k]*mu 
-                            for bio_id in reactions_biomass[k]]), biomass_label
-
-
     # constraints for medium (joshua: please add it here)
     for i in metabolites_com:
         # some exchange does not actually exist
@@ -197,9 +203,9 @@ def construct_steadycom(param,mu):
                 lp_prob += vex[k][i] == 0
 
         community_constraint = pulp.lpSum(vex[k][i] for k in organisms)
-        if i in media:
-            condition_comm = community_constraint - e[i] >= -media[i]
+        if i in media_dict.keys():
+            condition_comm = community_constraint - e[i] >= -media_dict[i]
         else:
             condition_comm = community_constraint - e[i] == 0
         lp_prob += condition_comm
-    return lp_prob
+    return lp_prob,v,X,k,reactions_biomass
