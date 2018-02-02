@@ -12,7 +12,7 @@ import os
 import pandas as pd
 import re
 from Workspace.WorkspaceClient import Workspace as workspaceService
-from DataFileUtil.DataFileUtilClient import get_objects,ws_name_to_id
+from DataFileUtil.DataFileUtilClient import DataFileUtil
 
 def parse_reactant(reactant, sign):
     """
@@ -96,7 +96,8 @@ def construct_steadycom(param,mu,config):
     print media
     workspace_name = param['workspace_name']
     ws = workspaceService(config['workspace-url'])
-    ws_id = ws_name_to_id(workspace_name)
+    dataUtil = DataFileUtil(url=config['workspace-url'])
+    ws_id = dataUtil.ws_name_to_id(workspace_name)
 
     meida_object = ws.get_objects2({'objects': [{'name': media, 
                                                 'wsid': ws_id}]})
