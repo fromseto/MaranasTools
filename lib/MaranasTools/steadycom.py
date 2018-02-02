@@ -96,11 +96,11 @@ def construct_steadycom(param,mu,config):
     print media
     workspace_name = param['workspace_name']
     ws = workspaceService(config['workspace-url'])
-    dataUtil = DataFileUtil(url=config['workspace-url'])
-    ws_id = dataUtil.ws_name_to_id(workspace_name)
+    # dataUtil = DataFileUtil(url=config['workspace-url'])
+    # ws_id = dataUtil.ws_name_to_id(workspace_name)
 
     meida_object = ws.get_objects2({'objects': [{'name': media, 
-                                                'wsid': ws_id}]})
+                                                'workspace': workspace_name}]})
     
     print ws_id
     print meida_object
