@@ -64,5 +64,5 @@ module MaranasTools {
     } SteadyComOutput;
 
     funcdef run_optstoic(OptStoicParams params) returns (OptStoicOutput output) authentication required;
-    funcdef run_steadycom(SteadyComParams params) returns (SteadyComOutput) authentication required;
+    funcdef run_steadycom(SteadyComParams params) returns (SteadyComOutput output) authentication required;
 };
