@@ -95,6 +95,9 @@ def construct_steadycom(param,mu,config):
     media = param['medium_upa']
     print media
     workspace_name = param['workspace_name']
+    print "--------------------"
+    print workspace_name
+    print "--------------------"
     ws = workspaceService(config['workspace-url'])
     # dataUtil = DataFileUtil(url=config['workspace-url'])
     # ws_id = dataUtil.ws_name_to_id(workspace_name)
