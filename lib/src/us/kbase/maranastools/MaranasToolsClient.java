@@ -185,7 +185,7 @@ public class MaranasToolsClient {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link us.kbase.maranastools.SteadyComParams SteadyComParams}
-     * @return   instance of type {@link us.kbase.maranastools.SteadyComOutput SteadyComOutput}
+     * @return   parameter "output" of type {@link us.kbase.maranastools.SteadyComOutput SteadyComOutput}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */

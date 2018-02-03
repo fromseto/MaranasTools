@@ -145,12 +145,13 @@ class MaranasToolsTest(unittest.TestCase):
     #     self.assertIn('report_name', outputs)
     #     self.assertIn('report_ref', outputs)
 
-    @unittest.skip('skipping optstoic test')
     def test_run_steadycom(self):
         # inputs = { ... define inputs here ... }
-        inputs = {"workspace_name":self.getWsName()}
+        inputs = {}
         print "test_run_steadycom"
         # expected_outputs = { ... defined expected results here ... }
+        inputs = {'model_inputs': 'test','medium_upa':'test_media', 'flux_output': 'test_flux',
+        "workspace_name":self.getWsName()}
         outputs = self.getImpl().run_steadycom(self.getContext(), inputs)[0]
         # insert some assertion that outputs = expected_outputs below.
         # self.assertEqual('awesome', 'aweome')

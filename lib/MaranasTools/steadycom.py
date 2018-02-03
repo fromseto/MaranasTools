@@ -94,6 +94,7 @@ def construct_steadycom(param,mu,config):
     model_inputs = param['model_inputs']
     media = param['medium_upa']
     print media
+    print param.keys()
     workspace_name = param['workspace_name']
     print "--------------------"
     print workspace_name

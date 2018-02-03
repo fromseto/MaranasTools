@@ -221,7 +221,7 @@ OptStoicOutput is a reference to a hash where the following keys are defined:
 
 =head2 run_steadycom
 
-  $return = $obj->run_steadycom($params)
+  $output = $obj->run_steadycom($params)
 
 =over 4
 
@@ -231,7 +231,7 @@ OptStoicOutput is a reference to a hash where the following keys are defined:
 
 <pre>
 $params is a MaranasTools.SteadyComParams
-$return is a MaranasTools.SteadyComOutput
+$output is a MaranasTools.SteadyComOutput
 SteadyComParams is a reference to a hash where the following keys are defined:
 	model_inputs has a value which is a reference to a list where each element is a MaranasTools.ModelInput
 	medium_upa has a value which is a string
@@ -252,7 +252,7 @@ SteadyComOutput is a reference to a hash where the following keys are defined:
 =begin text
 
 $params is a MaranasTools.SteadyComParams
-$return is a MaranasTools.SteadyComOutput
+$output is a MaranasTools.SteadyComOutput
 SteadyComParams is a reference to a hash where the following keys are defined:
 	model_inputs has a value which is a reference to a list where each element is a MaranasTools.ModelInput
 	medium_upa has a value which is a string
