@@ -80,7 +80,7 @@
                     "target_property": "medium_upa"
                 },
                 {
-                    "narrative_system_variable": "workspace_name",
+                    "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
                 },
                 {
