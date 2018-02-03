@@ -114,7 +114,7 @@ def construct_steadycom(param,mu,config):
         compound_ref = met_info["compound_ref"]
         compound_id = compound_ref.split('/')[-1]
         print compound_id
-        media_dict[] = met_info["maxFlux"]
+        media_dict[compound_id] = met_info["maxFlux"]
 
 
     # fetch information of S matrix for each organism k
