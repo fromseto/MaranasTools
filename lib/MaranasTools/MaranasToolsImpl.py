@@ -102,7 +102,7 @@ This sample module contains one small method - filter_contigs.
         # ctx is the context object
         # return variables are: output
         #BEGIN run_steadycom
-        for key, value in params:
+        for key, value in params.iteritems():
           print key,':',value
         returnVal = loop_for_steadycom(params,self.config)
         #END run_steadycom
