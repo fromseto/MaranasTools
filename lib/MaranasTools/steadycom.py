@@ -60,12 +60,12 @@ def build_s_matrix(df):
             if 'e' in cpd['compartment']: metabolites_EX.append(cpd['cpd'])
     return s_matrix,reactions,set(metabolites_EX)
 
-def loop_for_steadycom(param,config):
+def loop_for_steadycom(param,config,callback_url):
     mu = 0.1
     LB = None
     UB = None
 
-    lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu,config)
+    lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu,config,callback_url)
     # solve the model
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
@@ -89,7 +89,7 @@ def loop_for_steadycom(param,config):
             UB = mu
             mu = max(obj_val/X0,0.99)*mu
 
-def construct_steadycom(param,mu,config):
+def construct_steadycom(param,mu,config,callback_url):
 
     model_inputs = param['model_inputs']
     media = param['medium_upa']
@@ -113,7 +113,7 @@ def construct_steadycom(param,mu,config):
     for met_info in media_metabolites:
         compound_ref = met_info["compound_ref"]
         compound_id = compound_ref.split('/')[-1]
-        print compound_id
+        # print compound_id
         media_dict[compound_id] = met_info["maxFlux"]
 
 
@@ -122,7 +122,7 @@ def construct_steadycom(param,mu,config):
     # i: index of metabolites
     # j: index of reactions
 
-    fba_client = fba_tools(self.callback_url)  # or however your callback url is set
+    fba_client = fba_tools(callback_url)  # or however your callback url is set
                                                # then when you need the files
 
     S = {} # build S matrix for each FBA model k
