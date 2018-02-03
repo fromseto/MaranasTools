@@ -93,12 +93,12 @@ def construct_steadycom(param,mu,config):
 
     model_inputs = param['model_inputs']
     media = param['medium_upa']
-    print media
-    print param.keys()
+    # print media
+    # print param.keys()
     workspace_name = param['workspace_name']
-    print "--------------------"
-    print workspace_name
-    print "--------------------"
+    # print "--------------------"
+    # print workspace_name
+    # print "--------------------"
     ws = workspaceService(config['workspace-url'])
     # dataUtil = DataFileUtil(url=config['workspace-url'])
     # ws_id = dataUtil.ws_name_to_id(workspace_name)
@@ -106,9 +106,9 @@ def construct_steadycom(param,mu,config):
     meida_object = ws.get_objects2({'objects': [{'name': media, 
                                                 'workspace': workspace_name}]})
     
-    print ws_id
     print meida_object
     media_metabolites = meida_object['data'][0]['data']['mediacompounds']
+    print media_metabolites
     media_dict = {}
     for met_info in media_metabolites:
         media_dict[met_info["id"]] = met_info["maxFlux"]
