@@ -169,13 +169,13 @@ def construct_steadycom(param,mu,config,callback_url):
 
     metabolites_com = []
     for k,met_list in metabolites_EX.iteritems():
-        metabolites_com = metabolites_com + met_list
-    metabolites_com = set(metabolites_com)
+        metabolites_com = list(set(metabolites_com + met_list))
+    # metabolites_com = metabolites_com
     
     reactions_all = []
     for k,rxn_list in reactions.iteritems():
-        reactions_all = reactions_all + rxn_list
-    reactions_all = set(reactions_all)
+        reactions_all = list(set(reactions_all + rxn_list))
+    # reactions_all = set(reactions_all)
 
     #------- define variables
     X = pulp.LpVariable.dicts("X", organisms,
