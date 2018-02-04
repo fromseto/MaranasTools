@@ -150,7 +150,7 @@ def construct_steadycom(param,mu,config,callback_url):
         model_upa = model_input['model_upa']
         files = fba_client.model_to_tsv_file({
             'workspace_name': workspace_name,  # from params
-            'model_name': model_upa                     # also params
+            'model_name': 'iMR1_799'#model_upa                     # also params
         })
 
         # files will have two "File" objects. you should be able to get to them as:
