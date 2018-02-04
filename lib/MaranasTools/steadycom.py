@@ -73,7 +73,7 @@ def loop_for_steadycom(param,config,callback_url):
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
     # solve for growth rate
-    while (LB != None) and (UB != None) and (abs(LB-UB) < 0.00001):
+    while (LB == None) or (UB == None) or (abs(LB-UB) > 0.00001):
         # add constraints based on growth rate
         for bio_id in reactions_biomass[k]:
             lp_prob += v[k][bio_id] - X[k]*mu == 0
