@@ -200,6 +200,7 @@ def construct_steadycom(param,mu,config,callback_url):
     # define flux balance constraints
     for k in organisms:
         for i in S[k].keys():
+            print k
             print i
             j = '4HBTE_c0'
             print print S[k][i].keys()
