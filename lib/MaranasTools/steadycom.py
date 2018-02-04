@@ -23,6 +23,8 @@ def parse_reactant(reactant, sign):
     returns {'stoich': int, 'cpd': string, 'compartment': string}
     """
     m = re.match('\((?P<stoich>.+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
+    m = re.match('\((?P<stoich>\d*\.\d+|\d+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
+
     if not m:
         raise ValueError("can't parse {}".format(reactant))
     ret_val = m.groupdict()
