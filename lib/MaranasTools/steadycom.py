@@ -165,7 +165,7 @@ def construct_steadycom(param,mu,config,callback_url):
         metabolites[k] = Sij.keys()
         reactions[k] = rxns
         reactions_biomass[k] = 'bio1'#model_upa['biomasses'][0].id
-        metabolites_EX[k] = mets_EX
+        metabolites_EX[k] = list(mets_EX)
 
     metabolites_com = []
     for k,met_list in metabolites_EX.iteritems():
