@@ -200,6 +200,11 @@ def construct_steadycom(param,mu,config,callback_url):
     # define flux balance constraints
     for k in organisms:
         for i in S[k].keys():
+            print i
+            j = '4HBTE_c0'
+            print S[k][i][j]
+            print reactions_all
+            print v[k][j]
             dot_S_v = pulp.lpSum([S[k][i][j] * v[k][j]
                                   for j in reactions[k]])
             if i in metabolites_EX[k]:
