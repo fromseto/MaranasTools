@@ -4,6 +4,9 @@
 """
  SteadyCom 
 
+to do:
+1. get LB and UB for each reactions in GSM
+2. define the id of biomass reaction as input parameter
 """
 import pulp
 import json
@@ -200,34 +203,26 @@ def construct_steadycom(param,mu,config,callback_url):
     # define flux balance constraints
     for k in organisms:
         for i in S[k].keys():
-            print k
-            print i
-            j = '4HBTE_c0'
-            print S[k][i].keys()
-            print reactions_all
-
-            print S[k][i][j]
-            print v[k][j]
             dot_S_v = pulp.lpSum([S[k][i][j] * v[k][j]
-                                  for j in reactions[k]])
+                                  for j in S[k][i].keys()])
             if i in metabolites_EX[k]:
                 condition = dot_S_v == vex[k][i]
             else:
                 condition = dot_S_v == 0
             lp_prob += condition#, label  
 
-            for j in reactions[k]:
-                lp_prob += v[k][j] <= UB[k][j] * X[k]
-                lp_prob += v[k][j] >= LB[k][j] * X[k]
+            # for j in reactions[k]:
+            #     lp_prob += v[k][j] <= UB[k][j] * X[k]
+            #     lp_prob += v[k][j] >= LB[k][j] * X[k]
 
     # constraints for medium (joshua: please add it here)
     for i in metabolites_com:
         # some exchange does not actually exist
         for k in organisms:
-            if i not in metabolites_EX[i]:
+            if i not in metabolites_EX[k]:
                 lp_prob += vex[k][i] == 0
 
-        community_constraint = pulp.lpSum(vex[k][i] for k in organisms)
+        community_constraint = pulp.lpSum([vex[k][i] for k in organisms])
         if i in media_dict.keys():
             condition_comm = community_constraint - e[i] >= -media_dict[i]
         else:
