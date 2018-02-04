@@ -203,7 +203,7 @@ def construct_steadycom(param,mu,config,callback_url):
             print k
             print i
             j = '4HBTE_c0'
-            print print S[k][i].keys()
+            print S[k][i].keys()
             print reactions_all
 
             print S[k][i][j]
