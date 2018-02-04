@@ -151,7 +151,7 @@ def construct_steadycom(param,mu,config,callback_url):
         model_upa_ref = model_input['model_upa']
         model_id = model_upa_ref.split('/')[1]
         model_upa = ws.get_objects2({'objects': [{'objid': model_id, 
-                                                'workspace': workspace_name}]})
+                            'workspace': workspace_name}]})['data'][0]['data']
         files = fba_client.model_to_tsv_file({
             'workspace_name': workspace_name,  # from params
             'model_name': model_upa['name']                     # also params
