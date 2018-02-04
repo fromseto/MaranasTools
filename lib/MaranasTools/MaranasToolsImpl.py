@@ -104,7 +104,7 @@ This sample module contains one small method - filter_contigs.
         #BEGIN run_steadycom
         for key, value in params.iteritems():
           print key,':',value
-        returnVal = loop_for_steadycom(params,self.config,self.callback_url)
+        output = loop_for_steadycom(params,self.config,self.callback_url)
         #END run_steadycom
 
         # At some point might do deeper type checking...
