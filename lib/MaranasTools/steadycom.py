@@ -167,13 +167,13 @@ def construct_steadycom(param,mu,config,callback_url):
         model_file = files['reactions_file']['path']
         model_df = pd.read_table(model_file)
 
-        Sij,reactions,mets_EX = build_s_matrix(model_df)
+        Sij,rxns,mets_EX = build_s_matrix(model_df)
 
         k = model_upa['name']
         organisms.append(k)
         S[k] = Sij
         metabolites[k] = Sij.keys()
-        reactions[k] = reactions
+        reactions[k] = rxns
         reactions_biomass[k] = 'bio1'#model_upa['biomasses'][0].id
         metabolites_EX[k] = mets_EX
 
