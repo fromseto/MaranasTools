@@ -125,6 +125,7 @@ def construct_steadycom(param,mu,config,callback_url):
     fba_client = fba_tools(callback_url)  # or however your callback url is set
                                                # then when you need the files
 
+
     S = {} # build S matrix for each FBA model k
 
     # define sets for steadycom
@@ -147,10 +148,13 @@ def construct_steadycom(param,mu,config,callback_url):
     reactions_all = set(reactions_all)
 
     for model_input in model_inputs:
-        model_upa = model_input['model_upa']
+        model_upa_ref = model_input['model_upa']
+        model_id = model_upa_ref.split('/')[1]
+        model_upa = ws.get_objects2({'objects': [{'objid': model_id, 
+                                                'workspace': workspace_name}]})
         files = fba_client.model_to_tsv_file({
             'workspace_name': workspace_name,  # from params
-            'model_name': 'iMR1_799'#model_upa                     # also params
+            'model_name': model_upa['name']                     # also params
         })
 
         # files will have two "File" objects. you should be able to get to them as:
@@ -165,12 +169,12 @@ def construct_steadycom(param,mu,config,callback_url):
 
         Sij,reactions,mets_EX = build_s_matrix(model_df)
 
-        k = model_upa['id']
+        k = model_upa['name']
         organisms.append(k)
         S[k] = Sij
         metabolites[k] = Sij.keys()
         reactions[k] = reactions
-        reactions_biomass[k] = model_upa['biomasses'][0].id
+        reactions_biomass[k] = 'bio1'#model_upa['biomasses'][0].id
         metabolites_EX[k] = mets_EX
 
     #------- define variables
