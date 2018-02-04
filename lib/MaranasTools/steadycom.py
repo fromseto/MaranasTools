@@ -136,16 +136,6 @@ def construct_steadycom(param,mu,config,callback_url):
     metabolites = {} # get metaboite info for each FBA model k
     metabolites_EX = {}
     organisms = []
-    
-    metabolites_com = []
-    for k,met_list in metabolites_EX.iteritems():
-        metabolites_com = metabolites_com + met_list
-    metabolites_com = set(metabolites_com)
-    
-    reactions_all = []
-    for k,rxn_list in reactions.iteritems():
-        reactions_all = reactions_all + rxn_list
-    reactions_all = set(reactions_all)
 
     for model_input in model_inputs:
         model_upa_ref = model_input['model_upa']
@@ -176,6 +166,16 @@ def construct_steadycom(param,mu,config,callback_url):
         reactions[k] = rxns
         reactions_biomass[k] = 'bio1'#model_upa['biomasses'][0].id
         metabolites_EX[k] = mets_EX
+
+    metabolites_com = []
+    for k,met_list in metabolites_EX.iteritems():
+        metabolites_com = metabolites_com + met_list
+    metabolites_com = set(metabolites_com)
+    
+    reactions_all = []
+    for k,rxn_list in reactions.iteritems():
+        reactions_all = reactions_all + rxn_list
+    reactions_all = set(reactions_all)
 
     #------- define variables
     X = pulp.LpVariable.dicts("X", organisms,
