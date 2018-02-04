@@ -182,6 +182,7 @@ def construct_steadycom(param,mu,config,callback_url):
                               lowBound=0, upBound=1, cat='Continuous')
 
     # for k in organisms:
+    M = 1000
     v = pulp.LpVariable.dicts("v", (organisms,reactions_all),
                           lowBound=-M, upBound=M, cat='Continuous')
     vex = pulp.LpVariable.dicts("vex", (organisms,metabolites_com),
