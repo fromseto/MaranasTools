@@ -180,6 +180,23 @@ public class MaranasToolsClient {
         return res.get(0);
     }
 
+    /**
+     * <p>Original spec-file function name: run_steadycom</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.maranastools.SteadyComParams SteadyComParams}
+     * @return   parameter "output" of type {@link us.kbase.maranastools.SteadyComOutput SteadyComOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public SteadyComOutput runSteadycom(SteadyComParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<SteadyComOutput>> retType = new TypeReference<List<SteadyComOutput>>() {};
+        List<SteadyComOutput> res = caller.jsonrpcCall("MaranasTools.run_steadycom", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

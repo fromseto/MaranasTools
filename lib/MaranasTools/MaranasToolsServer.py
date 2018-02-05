@@ -337,6 +337,10 @@ class Application(object):
                              name='MaranasTools.run_optstoic',
                              types=[dict])
         self.method_authentication['MaranasTools.run_optstoic'] = 'required'  # noqa
+        self.rpc_service.add(impl_MaranasTools.run_steadycom,
+                             name='MaranasTools.run_steadycom',
+                             types=[dict])
+        self.method_authentication['MaranasTools.run_steadycom'] = 'required'  # noqa
         self.rpc_service.add(impl_MaranasTools.status,
                              name='MaranasTools.status',
                              types=[dict])

@@ -217,6 +217,112 @@ OptStoicOutput is a reference to a hash where the following keys are defined:
     }
 }
  
+
+
+=head2 run_steadycom
+
+  $output = $obj->run_steadycom($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a MaranasTools.SteadyComParams
+$output is a MaranasTools.SteadyComOutput
+SteadyComParams is a reference to a hash where the following keys are defined:
+	model_inputs has a value which is a reference to a list where each element is a MaranasTools.ModelInput
+	medium_upa has a value which is a string
+	flux_output has a value which is a string
+	workspace_name has a value which is a string
+ModelInput is a reference to a hash where the following keys are defined:
+	model_upa has a value which is a string
+	fixed_gr has a value which is a float
+SteadyComOutput is a reference to a hash where the following keys are defined:
+	report_name has a value which is a string
+	report_ref has a value which is a string
+	flux_output has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a MaranasTools.SteadyComParams
+$output is a MaranasTools.SteadyComOutput
+SteadyComParams is a reference to a hash where the following keys are defined:
+	model_inputs has a value which is a reference to a list where each element is a MaranasTools.ModelInput
+	medium_upa has a value which is a string
+	flux_output has a value which is a string
+	workspace_name has a value which is a string
+ModelInput is a reference to a hash where the following keys are defined:
+	model_upa has a value which is a string
+	fixed_gr has a value which is a float
+SteadyComOutput is a reference to a hash where the following keys are defined:
+	report_name has a value which is a string
+	report_ref has a value which is a string
+	flux_output has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub run_steadycom
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function run_steadycom (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to run_steadycom:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'run_steadycom');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "MaranasTools.run_steadycom",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'run_steadycom',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method run_steadycom",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'run_steadycom',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -260,16 +366,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'run_optstoic',
+                method_name => 'run_steadycom',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method run_optstoic",
+            error => "Error invoking method run_steadycom",
             status_line => $self->{client}->status_line,
-            method_name => 'run_optstoic',
+            method_name => 'run_steadycom',
         );
     }
 }
@@ -483,6 +589,108 @@ report_ref has a value which is a string
 a reference to a hash where the following keys are defined:
 report_name has a value which is a string
 report_ref has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ModelInput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+model_upa has a value which is a string
+fixed_gr has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+model_upa has a value which is a string
+fixed_gr has a value which is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 SteadyComParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+model_inputs has a value which is a reference to a list where each element is a MaranasTools.ModelInput
+medium_upa has a value which is a string
+flux_output has a value which is a string
+workspace_name has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+model_inputs has a value which is a reference to a list where each element is a MaranasTools.ModelInput
+medium_upa has a value which is a string
+flux_output has a value which is a string
+workspace_name has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 SteadyComOutput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+report_name has a value which is a string
+report_ref has a value which is a string
+flux_output has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+report_name has a value which is a string
+report_ref has a value which is a string
+flux_output has a value which is a string
 
 
 =end text

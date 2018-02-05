@@ -135,10 +135,12 @@ class MaranasToolsTest(unittest.TestCase):
     def test_run_optstoic(self):
         pass
         # inputs = { ... define inputs here ... }
-        inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}
-        print "test_run_optstoic"
+        inputs = {}
+        print "test_run_steadycom"
         # expected_outputs = { ... defined expected results here ... }
-        outputs = self.getImpl().run_optstoic(self.getContext(), inputs)[0]
+        inputs = {'model_inputs': 'test','medium_upa':'test_media', 'flux_output': 'test_flux',
+        "workspace_name":self.getWsName()}
+        outputs = self.getImpl().run_steadycom(self.getContext(), inputs)[0]
         # insert some assertion that outputs = expected_outputs below.
         # self.assertEqual('awesome', 'aweome')
         print(outputs)

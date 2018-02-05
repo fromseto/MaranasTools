@@ -30,7 +30,7 @@ This sample module contains one small method - filter_contigs.
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/fromseto/MaranasTools.git"
-    GIT_COMMIT_HASH = "5fd28712673259afabc69e4029fb4e0a3de60fe3"
+    GIT_COMMIT_HASH = "1193a5a0aca3105dd3f1de726d1698d72d63e8ab"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -100,19 +100,17 @@ This sample module contains one small method - filter_contigs.
            parameter "flux_output" of String
         """
         # ctx is the context object
-        # return variables are: output
+        # return variables are: returnVal
         #BEGIN run_steadycom
-        for key, value in params.iteritems():
-          print key,':',value
-        output = loop_for_steadycom(params,self.config,self.callback_url)
+        returnVal = loop_for_steadycom(params,self.config)
         #END run_steadycom
 
         # At some point might do deeper type checking...
-        if not isinstance(output, dict):
+        if not isinstance(returnVal, dict):
             raise ValueError('Method run_steadycom return value ' +
-                             'output is not type dict as required.')
+                             'returnVal is not type dict as required.')
         # return the results
-        return [output]
+        return [returnVal]
     def status(self, ctx):
         #BEGIN_STATUS
         returnVal = {'state': "OK",

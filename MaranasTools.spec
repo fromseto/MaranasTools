@@ -45,6 +45,24 @@ module MaranasTools {
         string report_ref;
     } OptStoicOutput;
 
-    funcdef run_optstoic(OptStoicParams params) returns (OptStoicOutput output) authentication required;
+    typedef structure {
+        string model_upa;
+        float fixed_gr;
+    } ModelInput;
 
+    typedef structure {
+        list<ModelInput> model_inputs;
+        string medium_upa;
+        string flux_output;
+        string workspace_name;
+    } SteadyComParams;
+
+    typedef structure {
+        string report_name;
+        string report_ref;
+        string flux_output;
+    } SteadyComOutput;
+
+    funcdef run_optstoic(OptStoicParams params) returns (OptStoicOutput output) authentication required;
+    funcdef run_steadycom(SteadyComParams params) returns (SteadyComOutput output) authentication required;
 };

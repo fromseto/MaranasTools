@@ -8,7 +8,6 @@ from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 from KBaseReport.KBaseReportClient import KBaseReport
 from optStoic import *
 from minRxnFlux import *
-from steadycom import loop_for_steadycom
 #END_HEADER
 
 
@@ -30,7 +29,7 @@ This sample module contains one small method - filter_contigs.
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/fromseto/MaranasTools.git"
-    GIT_COMMIT_HASH = "5fd28712673259afabc69e4029fb4e0a3de60fe3"
+    GIT_COMMIT_HASH = "ef47fe67244604b4009066f10f0b338c0f98af49"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -84,32 +83,6 @@ This sample module contains one small method - filter_contigs.
         # At some point might do deeper type checking...
         if not isinstance(output, dict):
             raise ValueError('Method run_optstoic return value ' +
-                             'output is not type dict as required.')
-        # return the results
-        return [output]
-
-    def run_steadycom(self, ctx, params):
-        """
-        :param params: instance of type "SteadyComParams" -> structure:
-           parameter "model_inputs" of list of type "ModelInput" ->
-           structure: parameter "model_upa" of String, parameter "fixed_gr"
-           of Double, parameter "medium_upa" of String, parameter
-           "flux_output" of String, parameter "workspace_name" of String
-        :returns: instance of type "SteadyComOutput" -> structure: parameter
-           "report_name" of String, parameter "report_ref" of String,
-           parameter "flux_output" of String
-        """
-        # ctx is the context object
-        # return variables are: output
-        #BEGIN run_steadycom
-        for key, value in params.iteritems():
-          print key,':',value
-        output = loop_for_steadycom(params,self.config,self.callback_url)
-        #END run_steadycom
-
-        # At some point might do deeper type checking...
-        if not isinstance(output, dict):
-            raise ValueError('Method run_steadycom return value ' +
                              'output is not type dict as required.')
         # return the results
         return [output]

@@ -62,6 +62,21 @@ class MaranasTools(object):
             'MaranasTools.run_optstoic',
             [params], self._service_ver, context)
 
+    def run_steadycom(self, params, context=None):
+        """
+        :param params: instance of type "SteadyComParams" -> structure:
+           parameter "model_inputs" of list of type "ModelInput" ->
+           structure: parameter "model_upa" of String, parameter "fixed_gr"
+           of Double, parameter "medium_upa" of String, parameter
+           "flux_output" of String, parameter "workspace_name" of String
+        :returns: instance of type "SteadyComOutput" -> structure: parameter
+           "report_name" of String, parameter "report_ref" of String,
+           parameter "flux_output" of String
+        """
+        return self._client.call_method(
+            'MaranasTools.run_steadycom',
+            [params], self._service_ver, context)
+
     def status(self, context=None):
         return self._client.call_method('MaranasTools.status',
                                         [], self._service_ver, context)
