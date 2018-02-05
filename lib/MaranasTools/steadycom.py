@@ -92,6 +92,11 @@ def loop_for_steadycom(param,config,callback_url):
             # mu_bounds['UB'] = mu
             UB = mu
             mu = max(obj_val/X0,0.99)*mu
+
+        print "--------------------------------"
+        print "LB: ",LB
+        print "UB: ",UB
+        print "mu: ",mu
     return {'growth rate': mu}
 
 def construct_steadycom(param,mu,config,callback_url):
