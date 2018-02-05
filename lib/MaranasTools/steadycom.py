@@ -22,7 +22,7 @@ def parse_reactant(reactant, sign):
     sign should be -1 or 1
     returns {'stoich': int, 'cpd': string, 'compartment': string}
     """
-    m = re.match('\((?P<stoich>.+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
+    # m = re.match('\((?P<stoich>.+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
     m = re.match('\((?P<stoich>\d*\.\d+|\d+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
 
     if not m:
@@ -77,9 +77,8 @@ def loop_for_steadycom(param,config,callback_url):
     # solve for growth rate
     while (LB == None) or (UB == None) or (abs(LB-UB) > 0.00001):
         # add constraints based on growth rate
-        for bio_id in reactions_biomass[k]:
-            lp_prob += v[k][bio_id] - X[k]*mu == 0
-                            
+        for k,bio_id in reactions_biomass.iteritems():
+            lp_prob += v[k][bio_id] - X[k]*mu == 0                            
         
         lp_prob.solve(pulp_solver)
         obj_val = pulp.value(lp_prob.objective)
