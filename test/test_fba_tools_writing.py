@@ -75,6 +75,7 @@ class FbaToolsWritingTest(unittest.TestCase):
     def getContext(self):
         return self.__class__.ctx
 
+    @unittest.skip('skipping test')
     def test_write_fba_model(self):
         cpd_tsv = """id\tname\tformula\tcharge\taliases
 cf00001\tcf00001\tnone\t0\tnone
@@ -117,3 +118,12 @@ pkr0000001\t>\tc0\tnone\tpkr0000001\tnone\tnone\tnone\t(1) cpd00002[c0] => (1) c
         print(model_upa['ref'])
 
         pprint(self.getWsClient().get_objects2({'objects': [{'ref': model_upa['ref']}]}))
+
+    def test_fetch_model_file(self):
+        fba_client = fba_tools(self.callback_url)
+        model_files = fba_client.model_to_tsv_file({
+            'model_name': 'iMR1_799',
+            'workspace_name': 'lqw5322:narrative_1515702128212',
+            'fulldb': 1
+        })
+        pprint(model_files)

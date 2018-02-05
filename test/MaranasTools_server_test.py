@@ -20,6 +20,7 @@ from MaranasTools.authclient import KBaseAuth as _KBaseAuth
 
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 
+@unittest.skip('skipping test')
 class MaranasToolsTest(unittest.TestCase):
 
     @classmethod
@@ -131,7 +132,6 @@ class MaranasToolsTest(unittest.TestCase):
     #                                        'min_length': 'ten'})
     #     self.assertIn('Cannot parse integer from min_length parameter', str(errorContext.exception))
 
-    @unittest.skip('skipping optstoic test')
     def test_run_optstoic(self):
         pass
         # inputs = { ... define inputs here ... }
