@@ -169,7 +169,7 @@ def construct_steadycom(param,mu,config,callback_url):
         S[k] = Sij
         metabolites[k] = Sij.keys()
         reactions[k] = rxns
-        reactions_biomass[k] = 'BIOMASS_Ecoli_core_w_GAM_c0'#model_upa['biomasses'][0].id
+        reactions_biomass[k] = 'BIOMASS-Ecoli-core-w-GAM-c0'#model_upa['biomasses'][0].id
         metabolites_EX[k] = list(mets_EX)
 
     metabolites_com = []
@@ -188,6 +188,12 @@ def construct_steadycom(param,mu,config,callback_url):
 
     # for k in organisms:
     M = 1000
+    print "***************"
+    for r in reactions_all:
+        if "BIOMASS" in r:
+            print "found:", r
+    print "***************"
+
     v = pulp.LpVariable.dicts("v", (organisms,reactions_all),
                           lowBound=-M, upBound=M, cat='Continuous')
     vex = pulp.LpVariable.dicts("vex", (organisms,metabolites_com),
