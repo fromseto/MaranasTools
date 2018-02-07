@@ -10,7 +10,7 @@
         "input": null,
         "output": null
     },
-    "parameters": [ 
+    "parameters": [
         {
             "id": "model_upa",
             "optional": false,
@@ -120,7 +120,8 @@
             "input_mapping": [
                 {
                     "input_parameter": "model_upa",
-                    "target_property": "model_upa"
+                    "target_property": "model_upa",
+                    "target_type_transform": "ref"
                 },
                 {
                     "input_parameter": "start_compound_id",
