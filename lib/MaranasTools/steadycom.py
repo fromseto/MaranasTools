@@ -105,8 +105,10 @@ def loop_for_steadycom(param,config,callback_url):
         for k,bio_id in reactions_biomass.iteritems():
             lp_prob += v[k][bio_id] - X[k]*mu == 0
         lp_prob.solve(pulp_solver)
+        obj_val = pulp.value(lp_prob.objective)
+        model_status = pulp.LpStatus[lp_prob.status]
 
-        if pulp.LpStatus[lp_prob.status] == "Optimal":
+        if obj_val >= 1:
             mu_LB = mu
             if mu_UB == None:
                 mu = mu*2
@@ -116,9 +118,11 @@ def loop_for_steadycom(param,config,callback_url):
             mu_UB = mu
             mu = (mu_LB + mu_UB)/2.0
         print "--------------------------------"
-        print "LB: ",LB
-        print "UB: ",UB
-        print "mu: ",mu
+        print "model_status", model_status
+        print "sum_of_X: ", obj_val
+        print "LB: ", mu_LB
+        print "UB: ", mu_UB
+        print "mu: ", mu
     return {'growth rate': mu}
 
 def construct_steadycom(param,mu,config,callback_url):
@@ -252,6 +256,7 @@ def construct_steadycom(param,mu,config,callback_url):
                 if j == 'ATPM_c0':
                     lp_prob += v[k][j] <= UB * X[k] #UB[k][j] * X[k]
                     lp_prob += v[k][j] >= 10 * X[k] #LB[k][j] * X[k]
+                    continue
                 lp_prob += v[k][j] <= UB * X[k] #UB[k][j] * X[k]
                 lp_prob += v[k][j] >= LB * X[k] #LB[k][j] * X[k]
 
