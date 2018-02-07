@@ -72,27 +72,49 @@ def loop_for_steadycom(param,config,callback_url):
 
     lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu,config,callback_url)
     # solve the model
-    pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
+    pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=0, options=[])
 
-    # solve for growth rate
-    while (LB == None) or (UB == None) or (abs(LB-UB) > 0.00001):
+    # # solve for growth rate
+    # while (LB == None) or (UB == None) or (abs(LB-UB) > 0.00001):
+    #     # add constraints based on growth rate
+    #     for k,bio_id in reactions_biomass.iteritems():
+    #         lp_prob += v[k][bio_id] - X[k]*mu == 0                            
+        
+    #     lp_prob.solve(pulp_solver)
+    #     obj_val = pulp.value(lp_prob.objective)
+
+    #     X0 = 1 # total biomass (scale to 1 so that each X_k is relative abundance)
+    #     if obj_val >= X0:
+    #         # mu_bounds['LB'] = mu
+    #         LB = mu
+    #         mu = max(obj_val/X0,1.01)*mu
+    #     else:
+    #         # mu_bounds['UB'] = mu
+    #         UB = mu
+    #         mu = max(obj_val/X0,0.99)*mu
+
+    #     print "--------------------------------"
+    #     print "LB: ",LB
+    #     print "UB: ",UB
+    #     print "mu: ",mu
+
+    mu_LB = 0
+    mu_UB = None 
+    while (mu_UB == None) or (abs(mu_UB-mu_LB) > 0.0001) :
         # add constraints based on growth rate
         for k,bio_id in reactions_biomass.iteritems():
-            lp_prob += v[k][bio_id] - X[k]*mu == 0                            
-        
+            lp_prob += v[k][bio_id] - X[k]*mu == 0
         lp_prob.solve(pulp_solver)
-        obj_val = pulp.value(lp_prob.objective)
 
-        X0 = 1 # total biomass (scale to 1 so that each X_k is relative abundance)
-        if obj_val >= X0:
-            # mu_bounds['LB'] = mu
-            LB = mu
-            mu = max(obj_val/X0,1.01)*mu
+        if pulp.LpStatus[lp_prob.status] == "Optimal":
+            mu_LB = mu
+            if mu_UB = None:
+                mu = mu*2
+            else:
+                mu = (mu_LB + mu_UB)/2.0
         else:
-            # mu_bounds['UB'] = mu
-            UB = mu
-            mu = max(obj_val/X0,0.99)*mu
-
+            mu_UB = mu
+            mu = (mu_LB + mu_UB)/2.0
         print "--------------------------------"
         print "LB: ",LB
         print "UB: ",UB
