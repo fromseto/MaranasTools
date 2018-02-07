@@ -70,7 +70,7 @@ def loop_for_steadycom(param,config,callback_url):
     LB = None
     UB = None
 
-    lp_prob,v,X,k,reactions_biomass = construct_steadycom(param,mu,config,callback_url)
+    lp_prob_no_biomass,v,X,k,reactions_biomass = construct_steadycom(param,mu,config,callback_url)
     # solve the model
     pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=0, options=[])
 
@@ -100,7 +100,8 @@ def loop_for_steadycom(param,config,callback_url):
 
     mu_LB = 0
     mu_UB = None 
-    while (mu_UB == None) or (abs(mu_UB-mu_LB) > 0.0001) :
+    while (mu_UB == None) or (abs(mu_UB-mu_LB) > 0.0001):
+        lp_prob = lp_prob_no_biomass
         # add constraints based on growth rate
         for k,bio_id in reactions_biomass.iteritems():
             lp_prob += v[k][bio_id] - X[k]*mu == 0
@@ -118,11 +119,12 @@ def loop_for_steadycom(param,config,callback_url):
             mu_UB = mu
             mu = (mu_LB + mu_UB)/2.0
         print "--------------------------------"
-        print "model_status", model_status
+        print "model_status: ", model_status
         print "sum_of_X: ", obj_val
+        print "mu current: ", obj_val
         print "LB: ", mu_LB
         print "UB: ", mu_UB
-        print "mu: ", mu
+        print "mu for next iteration: ", mu
     return {'growth rate': mu}
 
 def construct_steadycom(param,mu,config,callback_url):
