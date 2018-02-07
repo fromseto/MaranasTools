@@ -14,6 +14,7 @@ from fba_tools.fba_toolsClient import fba_tools
 import os
 import pandas as pd
 import re
+import copy
 from Workspace.WorkspaceClient import Workspace as workspaceService
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 
@@ -101,7 +102,7 @@ def loop_for_steadycom(param,config,callback_url):
     mu_LB = 0
     mu_UB = None 
     while (mu_UB == None) or (abs(mu_UB-mu_LB) > 0.0001):
-        lp_prob = lp_prob_no_biomass
+        lp_prob = copy.deepcopy(lp_prob_no_biomass)
         # add constraints based on growth rate
         for k,bio_id in reactions_biomass.iteritems():
             lp_prob += v[k][bio_id] - X[k]*mu == 0
