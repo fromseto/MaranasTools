@@ -108,7 +108,7 @@ def loop_for_steadycom(param,config,callback_url):
 
         if pulp.LpStatus[lp_prob.status] == "Optimal":
             mu_LB = mu
-            if mu_UB = None:
+            if mu_UB == None:
                 mu = mu*2
             else:
                 mu = (mu_LB + mu_UB)/2.0
