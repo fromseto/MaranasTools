@@ -214,6 +214,8 @@ def construct_steadycom(param,mu,config,callback_url):
 
     biomass_labels = []
     # define flux balance constraints
+    UB = 1000
+    LB = -1000
     for k in organisms:
         for i in S[k].keys():
             dot_S_v = pulp.lpSum([S[k][i][j] * v[k][j]
@@ -224,9 +226,12 @@ def construct_steadycom(param,mu,config,callback_url):
                 condition = dot_S_v == 0
             lp_prob += condition#, label  
 
-            # for j in reactions[k]:
-            #     lp_prob += v[k][j] <= UB[k][j] * X[k]
-            #     lp_prob += v[k][j] >= LB[k][j] * X[k]
+            for j in reactions[k]:
+                if j == 'ATPM_c0':
+                    lp_prob += v[k][j] <= UB * X[k] #UB[k][j] * X[k]
+                    lp_prob += v[k][j] >= 10 * X[k] #LB[k][j] * X[k]
+                lp_prob += v[k][j] <= UB * X[k] #UB[k][j] * X[k]
+                lp_prob += v[k][j] >= LB * X[k] #LB[k][j] * X[k]
 
     # constraints for medium (joshua: please add it here)
     for i in metabolites_com:
@@ -237,7 +242,7 @@ def construct_steadycom(param,mu,config,callback_url):
 
         community_constraint = pulp.lpSum([vex[k][i] for k in organisms])
         if i in media_dict.keys():
-            condition_comm = community_constraint - e[i] >= -media_dict[i]
+            condition_comm = community_constraint - e[i] == -media_dict[i]
         else:
             condition_comm = community_constraint - e[i] == 0
         lp_prob += condition_comm
