@@ -100,8 +100,9 @@ def loop_for_steadycom(param,config,callback_url):
     #     print "mu: ",mu
 
     mu_LB = 0
-    mu_UB = None 
-    while (mu_UB == None) or (abs(mu_UB-mu_LB) > 0.0001):
+    mu_UB = None
+    loop_num = 0
+    while (mu_UB == None) or (abs(mu_UB-mu_LB) > 0.0001) or loop_num < 30:
         lp_prob = copy.deepcopy(lp_prob_no_biomass)
         # add constraints based on growth rate
         for k,bio_id in reactions_biomass.iteritems():
@@ -126,6 +127,8 @@ def loop_for_steadycom(param,config,callback_url):
         print "LB: ", mu_LB
         print "UB: ", mu_UB
         print "mu for next iteration: ", mu
+
+        loop_num = loop_num+1
     return {'growth rate': mu}
 
 def construct_steadycom(param,mu,config,callback_url):
