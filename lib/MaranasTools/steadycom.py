@@ -108,10 +108,11 @@ def loop_for_steadycom(param,config,callback_url):
             label = 'biomass_abundance_'+k
             if init==True:
                 lp_prob += v[k][bio_id] - X[k]*mu == 0, label
-                init = False
             else:
                 lp_prob.constraints[label].pop(X[k])
                 lp_prob.constraints[label].addterm(X[k], -mu)
+
+        init = False
 
         lp_prob.solve(pulp_solver)
         obj_val = pulp.value(lp_prob.objective)
