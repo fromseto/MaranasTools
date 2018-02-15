@@ -75,6 +75,7 @@ This sample module contains one small method - filter_contigs.
         # return variables are: output
         #BEGIN run_optstoic
         # workspace_name = params['workspace_name']
+        print params.keys()
         stoic_dic,model_files = simulate_optStoic(params,self.config)
         # stoic_dic = simulate_optStoic(start_compound, target_compound)
 
