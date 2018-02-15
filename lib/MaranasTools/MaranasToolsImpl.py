@@ -74,11 +74,15 @@ This sample module contains one small method - filter_contigs.
         # ctx is the context object
         # return variables are: output
         #BEGIN run_optstoic
-        start_compound = params['start_compound']
-        target_compound = params['target_compound']
         # workspace_name = params['workspace_name']
-        stoic_dic = simulate_optStoic(start_compound, target_compound)
-        output = run_minRxnFlux(stoic_dic, self.config, params)
+        stoic_dic,model_files = simulate_optStoic(params,self.config)
+        # stoic_dic = simulate_optStoic(start_compound, target_compound)
+
+        # stoic_dic = {'cpd00067_c0': 3.0,
+        #             'cpd00027_c0': -1.0,
+        #             'cpd00029_c0': 3.0
+        #             }
+        output = run_minRxnFlux(stoic_dic, self.config, params, model_files)
         #END run_optstoic
 
         # At some point might do deeper type checking...

@@ -12,25 +12,29 @@ import copy
 import random
 import string  # to generate random hex code
 import json
-# import pdb
+import pdb
 import logging
 import pandas as pd
 # import sys
 # sys.path.append(os.getcwd())
 import gams_parser
 from drawpath import *
-from CreateReport import CreateReport
-from pulp_scip import SCIP_CMD 
+# from CreateReport import CreateReport
+from pulp_scip import SCIP_CMD
+import re
+from fba_tools.fba_toolsClient import fba_tools
 
 # Global variables/solver options
 EPS = 1e-5
 GUROBI_OPTIONS = 'Threads=2 TimeLimit=1800 MIPGapAbs=1e-6 MIPGap=1e-6 CliqueCuts=2'
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-data_dir = os.path.normpath(os.path.join(
-    current_dir, '../../data/'))
+# data_dir = os.path.normpath(os.path.join(
+#     current_dir, '../../data/'))
+# data_dir = os.path.normpath(os.path.join(
+#     current_dir, '../../data/modelSEED'))
 # res_dir = os.path.normpath(os.path.join(
-#     current_dir, '../../data/','out'))
+#     current_dir, '../../data/modelSEED/','out'))
 
 # "linux2" is the platform for lxcluster/hammer
 # if sys.platform == 'cygwin' and sys.platform =='linux2':
@@ -95,25 +99,26 @@ class Database(object):
 
     def load(self):
 
-        # Load S matrix dictionary (S(i,j)) from json
-        if 'S' not in self.dbdict:
-            self.Sji = json.load(open(os.path.join(self.data_filepath,
-                                                   self.dbdict['Sji']), 'r+'))
+        # # Load S matrix dictionary (S(i,j)) from json
+        # if 'S' not in self.dbdict:
+        #     self.Sji = json.load(open(os.path.join(self.data_filepath,
+        #                                            self.dbdict['Sji']), 'r+'))
+        #     self.S = self.transpose_S(self.Sji)
+        # else:
+        #     try:
+        #         self.S = json.load(open(os.path.join(self.data_filepath,
+        #                                              self.dbdict['S']), 'r+'))
 
-            self.S = self.transpose_S(self.Sji)
-        else:
-            try:
-                self.S = json.load(open(os.path.join(self.data_filepath,
-                                                     self.dbdict['S']), 'r+'))
-
-            except:
-                # TODO add function to differentiate json/txt input
-                self.S = gams_parser.convert_parameter_table_to_dict(
-                    os.path.join(self.data_filepath,
-                                 '20160616_optstoic_Sij.txt')
-                )
-            self.Sji = self.transpose_S(self.S)
-
+        #     except:
+        #         # TODO add function to differentiate json/txt input
+        #         self.S = gams_parser.convert_parameter_table_to_dict(
+        #             os.path.join(self.data_filepath,
+        #                          '20160616_optstoic_Sij.txt')
+        #         )
+        #     self.Sji = self.transpose_S(self.S)
+        self.S = json.load(open(os.path.join(self.data_filepath,
+                                                   self.dbdict['Sij']), 'r+'))
+        self.Sji = self.transpose_S(self.S)
         # Load reactions
         logging.debug('Reading reaction file...')
         self.reactions = gams_parser.convert_set_to_list(
@@ -182,7 +187,8 @@ class Database(object):
     def update_S(self, extension_dict):
         temp_rxn = []
         for met, entries in extension_dict.iteritems():
-            if met not in self.S:
+            # pdb.set_trace()
+            if met not in self.S.keys():
                 self.S[met] = {}
                 self.metabolites.append(met)
             for rxn, coeff in entries.iteritems():
@@ -193,6 +199,7 @@ class Database(object):
         return self.S, temp_rxn
 
     def set_database_export_reaction(self, export_reactions_Sij_dict):
+        # pdb.set_trace()
         _, temp_rxn = self.update_S(export_reactions_Sij_dict)
         if len(self.user_defined_export_rxns) != 0:
             logging.warning("Warning: The current list of export reactions\
@@ -227,7 +234,7 @@ class MinRxnFlux(object):
                  specific_bounds={},
                  max_iteration=2,
                  pulp_solver=None,
-                 data_filepath=data_dir,
+                 data_filepath=None,
                  result_filepath='result/',
                  M=1000):
         """
@@ -293,6 +300,8 @@ class MinRxnFlux(object):
                                   lowBound=0, upBound=1, cat='Binary')
         G = pulp.LpVariable.dicts("G", self.database.reactions,
                                   lowBound=-M, upBound=M, cat='Continuous')
+
+        # pdb.set_trace()
 
         for j in self.database.reactions:
 
@@ -362,10 +371,11 @@ class MinRxnFlux(object):
 
         # Constraints
         # Mass_balance
-        for i in self.database.metabolites:
-            # If metabolites not involve in any reactions
-            if i not in self.database.S:
-                continue
+        # for i in self.database.metabolites:
+        for i in self.database.S.keys():
+            # # If metabolites not involve in any reactions
+            # if i not in self.database.S:
+            #     continue
             label = "mass_balance_%s" % i
             dot_S_v = pulp.lpSum([self.database.S[i][j] * v[j]
                                   for j in self.database.S[i].keys()])
@@ -437,7 +447,7 @@ class MinRxnFlux(object):
 
         while True and self.iteration <= max_iteration:
             logging.info("Iteration %s", self.iteration)
-            #lp_prob.writeLP("OptStoic.lp", mip=1)  #optional
+            lp_prob.writeLP("OptStoic_SEED.lp", mip=1)  #optional
             e1 = time.time()
             lp_prob.solve(self.pulp_solver)
             e2 = time.time()
@@ -538,10 +548,70 @@ def setupWorkingDir(directory=None):
         os.mkdir(directory)
     except IOError:
         log("Unable to setup working dir {0}".format(directory))
-        raise
+#         raise
 
-def run_minRxnFlux(optSotic_result_dict,config,params):
-    db = load_db_rxns(data_dir,optSotic_result_dict)
+def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
+    # rxn_df = pd.read_table(data_dir+'/iMR1_799-reactions.tsv')
+    # met_df = pd.read_table(data_dir+'/iMR1_799-compounds.tsv')
+    rxn_df = pd.read_table(model_files['reactions_file']['path'])
+    met_df = pd.read_table(model_files['compounds_file']['path'])
+
+    Sji = db.Sji     
+
+    all_rxns_df = pd.DataFrame()
+    for ind, res in sorted(pathways.iteritems()):
+        reaction_ids=res['reaction_id']
+        rxn_pathway = rxn_df[rxn_df['id'].isin(reaction_ids)]
+        rxn_pathway['reference'] = ind
+        all_rxns_df = all_rxns_df.append(rxn_pathway)
+
+    rxn_file = os.path.join(res_dir, "rxn_file.tsv")            
+    # rxn_file = data_dir+ "/rxn_file.tsv"
+    # with open(rxn_file, 'w') as rf:
+    #         rf.write(all_rxns_df)
+    all_rxns_df.to_csv(rxn_file,index=False)
+
+    all_mets_list = []
+    for r in list(set(all_rxns_df['id'].tolist())):
+        all_mets_list.extend(Sji[r])
+    all_mets_list= list(set(all_mets_list))
+    met_pathway_df = met_df[met_df['id'].isin(all_mets_list)]
+    
+    cpd_file = os.path.join(res_dir, "cpd_file.tsv")
+    # cpd_file = data_dir+"/cpd_file.tsv"   
+    # with open(cpd_file, 'w') as cf:
+    #     cf.write(met_pathway_df)
+    met_pathway_df.to_csv(cpd_file,index=False)
+
+    # upload those files as a model and get the reference back.
+    # see here for details:
+    # https://github.com/kbaseapps/fba_tools/blob/master/fba_tools.spec#L524
+    
+    callback_url = os.environ['SDK_CALLBACK_URL']
+    fba_client = fba_tools(callback_url)
+    model_upa = fba_client.tsv_file_to_model({
+        'model_file': {'path': rxn_file},
+        'compounds_file': {'path': cpd_file},
+        'workspace_name': workspace_name,#self.getWsName(),
+        'model_name': 'pathways_from_optStoic',
+        'biomass': []
+    })
+
+    print('UPLOAD A MODEL - GOT UPA')
+    print(model_upa['ref'])
+
+    pprint(self.getWsClient().get_objects2({'objects': [{'ref': model_upa['ref']}]}))
+
+def run_minRxnFlux(optSotic_result_dict, config, params, model_files):
+
+    res_dir = os.path.join(config['scratch'], "optstoic_out")
+    data_dir = os.path.join(config['scratch'], "optstoic_input")
+
+    # log("optStoic output dir is {0}".format(res_dir))
+    setupWorkingDir(data_dir)
+    setupWorkingDir(res_dir)
+
+    db = load_db_rxns(optSotic_result_dict, model_files,data_dir)
     logging.info("Database loaded!")
 
     # df_bounds = pd.read_csv('specific_bounds.csv', index_col=0)
@@ -562,10 +632,6 @@ def run_minRxnFlux(optSotic_result_dict,config,params):
     USE_LOOPLESS = False
     CLEANUP = True #set to true if you want to delete all .sol and .lp files
 
-    res_dir = os.path.join(config['scratch'], "optstoic_out")
-    # log("optStoic output dir is {0}".format(res_dir))
-    setupWorkingDir(res_dir)
-
     test = MinRxnFlux(db, objective='MinFlux',
                     specific_bounds=specific_bounds,
                     max_iteration=MAX_ITERATION,
@@ -577,32 +643,119 @@ def run_minRxnFlux(optSotic_result_dict,config,params):
     #### solve and draw pathway to figures
     lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
 
-    # Creating kegg model and drawing pathways
-    f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
-    pathway_objects = []
+    workspace_name = params['workspace_name']
+    test_write_fba_model(pathways,db,model_files,workspace_name,res_dir)
+    #----to do: draw pathways----
+    # # Creating kegg model and drawing pathways
+    # f = open(os.path.join(res_dir, 'test_KeggModel.txt'), 'w+')
+    # pathway_objects = []
 
-    for ind, res in sorted(test.pathways.iteritems()):
-        p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
-        p.rearrange_reaction_order()
-        pathway_objects.append(p)
-        generate_kegg_model(p, filehandle=f)
-        graph_title = "{0}_P{1}".format(p.name, p.id)
-        # draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
-        #             imageFormat='png', graphTitle=graph_title, debug=True)
-        draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
-                    imageFormat='png', graphTitle=graph_title, debug=True)
-    f.close()
-    print "Generate kegg_model and draw pathway: Pass!"
+    # for ind, res in sorted(test.pathways.iteritems()):
+    #     p = Pathway(id=ind, name='OptStoic', reaction_ids=res['reaction_id'], fluxes=res['flux'])
+    #     p.rearrange_reaction_order()
+    #     pathway_objects.append(p)
+    #     generate_kegg_model(p, filehandle=f)
+    #     graph_title = "{0}_P{1}".format(p.name, p.id)
+    #     # draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+    #     #             imageFormat='png', graphTitle=graph_title, debug=True)
+    #     draw_pathway(p, imageFileName=os.path.join(res_dir+'/pathway_{0:03d}'.format(p.id)),
+    #                 imageFormat='png', graphTitle=graph_title, debug=True)
+    # f.close()
+    # print "Generate kegg_model and draw pathway: Pass!"
 
     callback_url = os.environ['SDK_CALLBACK_URL']
     report_maker = CreateReport(callback_url, config['scratch'])
     result = report_maker.run(params)
     return result
 
-def load_db_rxns(data_dir,optSotic_result_dict):
+def parse_reactant(reactant, sign):
+    """
+    sign should be -1 or 1
+    returns {'stoich': int, 'cpd': string, 'compartment': string}
+    """
+    # m = re.match('\((?P<stoich>.+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
+    m = re.match('\((?P<stoich>\d*\.\d+|\d+)\)\s*(?P<cpd>[a-zA-Z0-9_]+)\[(?P<compartment>[a-zA-Z0-9_]+)\]', reactant)
 
+    if not m:
+        raise ValueError("can't parse {}".format(reactant))
+    ret_val = m.groupdict()
+    ret_val['stoich'] = float(ret_val['stoich']) * sign
+    return ret_val
+
+def parse_equation(equation):
+    left_side, right_side = re.split('\s*<?=>?\s*', equation)
+
+    reactants = list()
+    if left_side:
+        left_cpds = re.split('\s+\+\s+', left_side)
+        reactants = reactants + [parse_reactant(r, -1) for r in left_cpds]
+    if right_side:
+        right_cpds = re.split('\s+\+\s+', right_side)
+        reactants = reactants + [parse_reactant(r, 1) for r in right_cpds]
+    return reactants
+
+def build_s_matrix(df):
+    s_matrix = dict()
+    reactions = []
+    metabolites_EX = []
+    for i in range(len(df)):
+        rxn = df.id[i]
+        if 'BIOMASS' in rxn: continue
+        reactions.append(rxn)
+        try:
+            # pdb.set_trace()
+            reactants = parse_equation(df.equation[i])
+        except:
+            raise ValueError("can't parse equation {} - {}".format(i, df.equation[i]))
+        
+        for cpd in reactants:
+            if 'cpd' in cpd['cpd']: 
+                cpd_name = cpd['cpd'] + '_' + cpd['compartment']
+            else: 
+                cpd_name = cpd['cpd']
+            # if cpd['cpd'] not in s_matrix:
+            #     s_matrix[cpd['cpd']] = dict()
+            # if rxn not in s_matrix[cpd['cpd']]:
+            #     s_matrix[cpd['cpd']][rxn] = dict()
+            # s_matrix[cpd['cpd']][rxn] = cpd['stoich']
+            if cpd_name not in s_matrix:
+                s_matrix[cpd_name] = dict()
+            if rxn not in s_matrix[cpd_name]:
+                s_matrix[cpd_name][rxn] = dict()
+            s_matrix[cpd_name][rxn] = cpd['stoich']
+    return s_matrix
+
+def write_to_required_format(datafiles,data_dir):
+    rxns_tsv = datafiles['rxns']
+    mets_tsv = datafiles['mets']
+
+    rxns_df = pd.read_table(rxns_tsv)
+    # print rxns_df.head(5)
+    rxns_df.to_csv(os.path.join(data_dir,'optstoic_v3_reactions.txt'), header=False, index=False,columns=['id'])
+
+    S_matrix = build_s_matrix(rxns_df)
+    with open(os.path.join(data_dir,'optstoic_v3_Sij_dict.json'), 'w') as fp:
+        json.dump(S_matrix, fp)
+    # reaction type (0 = forward irreversible;
+    # 1 = reversible; 2 = backward irreversible; 4 = exchange)
+    rxn_type_df = rxns_df[['id','direction']]
+    rxn_type_df['direction'] = rxn_type_df['direction'].map({'>': 0, '=': 1,'<':'2'})
+    rxn_type_df.to_csv(os.path.join(data_dir,'optstoic_v3_reactiontype.txt'), header=False, index=False,sep=' ')
+
+    mets_df = pd.read_table(mets_tsv)
+    mets_df.to_csv(os.path.join(data_dir,'optstoic_v3_metabolites.txt'), header=False, index=False,columns=['id'])
+
+
+def load_db_rxns(optSotic_result_dict, model_files, data_dir):
+    # conver to the original file format
+    datafiles ={}
+    datafiles['mets'] = model_files['compounds_file']['path']# data_dir+'/iMR1_799-reactions.tsv'
+    datafiles['rxns'] = model_files['reactions_file']['path']# data_dir+'/iMR1_799-compounds.tsv'
+
+    write_to_required_format(datafiles, data_dir)
+    
     dbdict = {
-        'Sji': 'optstoic_v3_Sji_dict.json',
+        'Sij': 'optstoic_v3_Sij_dict.json',
         'reaction': 'optstoic_v3_reactions.txt',
         'metabolite': 'optstoic_v3_metabolites.txt',
         'reactiontype': 'optstoic_v3_reactiontype.txt',
@@ -627,13 +780,20 @@ def load_db_rxns(data_dir,optSotic_result_dict):
     user_defined_export_rxns_Sij = Database.transpose_S(
         user_defined_export_rxns_Sji
     )
-
+    # print user_defined_export_rxns_Sij
+    # pdb.set_trace()
     DB.set_database_export_reaction(user_defined_export_rxns_Sij)
 
     return DB
 
 if __name__ == '__main__':
-    parameters = {'C00033': 3.0,
-                'C00267': -1.0,
-                'C00080': 3.0}
-    run_minRxnFlux(parameters)
+    # parameters = {'C00033': 3.0,
+    #             'C00267': -1.0,
+    #             'C00080': 3.0}
+    # run_minRxnFlux(parameters)
+    optSotic_result_dict = {'cpd00067_c0': 3.0,
+                            'cpd00027_c0': -1.0,
+                            'cpd00029_c0': 3.0
+                            }
+    # load_db_rxns(data_dir,optSotic_result_dict)
+    run_minRxnFlux(optSotic_result_dict)

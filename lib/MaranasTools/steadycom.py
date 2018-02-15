@@ -66,6 +66,108 @@ def build_s_matrix(df):
             if 'e' in cpd['compartment']: metabolites_EX.append(cpd['cpd'])
     return s_matrix,reactions,set(metabolites_EX)
 
+# def writeFBAobject():
+    
+#     @optional 
+#     MFALog 
+#     maximizeActiveReactions 
+#     calculateReactionKnockoutSensitivity 
+#     biomassRemovals 
+#     ExpressionKappa 
+#     ExpressionOmega 
+#     ExpressionAlpha 
+#     expression_matrix_ref 
+#     expression_matrix_column 
+#     jobnode 
+#     gapfillingSolutions 
+#     QuantitativeOptimizationSolutions 
+#     quantitativeOptimization 
+#     minimize_reactions 
+#     minimize_reaction_costs 
+#     FBATintleResults 
+#     FBAMinimalReactionsResults 
+#     PROMKappa 
+#     phenotypesimulationset_ref 
+#     objectiveValue phenotypeset_ref 
+#     promconstraint_ref 
+#     regulome_ref 
+#     tintleW 
+#     tintleKappa 
+#     massbalance 
+#     rxnprob_ref
+
+#     my_fba = {
+#       fba_id id;
+#       bool fva;
+#       bool fluxMinimization;
+#       bool findMinimalMedia;
+#       bool allReversible;
+#       bool simpleThermoConstraints;
+#       bool thermodynamicConstraints;
+#       bool noErrorThermodynamicConstraints;
+#       bool minimizeErrorThermodynamicConstraints;
+#       bool quantitativeOptimization;
+#       bool maximizeObjective;
+#       mapping compoundflux_objterms;
+#       mapping reactionflux_objterms;
+#       mapping biomassflux_objterms;
+#       int comboDeletions;
+#       int numberOfSolutions;
+#       float objectiveConstraintFraction;
+#       float defaultMaxFlux;
+#       float defaultMaxDrainFlux;
+#       float defaultMinDrainFlux;
+#       float PROMKappa;
+#       float tintleW;
+#       float tintleKappa;
+#       float ExpressionAlpha;
+#       float ExpressionOmega;
+#       float ExpressionKappa;
+#       bool decomposeReversibleFlux;
+#       bool decomposeReversibleDrainFlux;
+#       bool fluxUseVariables;
+#       bool drainfluxUseVariables;
+#       bool minimize_reactions;
+#       bool calculateReactionKnockoutSensitivity;
+#       bool maximizeActiveReactions;
+#       string jobnode;
+#       regulome_ref regulome_ref;
+#       fbamodel_ref fbamodel_ref;
+#       rxnprob_ref rxnprob_ref;
+#       promconstraint_ref promconstraint_ref;
+#       expression_matrix_ref expression_matrix_ref;
+#       string expression_matrix_column;
+#       media_ref media_ref;
+#       phenotypeset_ref phenotypeset_ref;
+#       list geneKO_refs;
+#       list reactionKO_refs;
+#       list additionalCpd_refs;
+#       mapping uptakeLimits;
+#       mapping minimize_reaction_costs;
+#       string massbalance;
+#       mapping parameters;
+#       mapping> inputfiles;
+#       list FBAConstraints;
+#       list FBAReactionBounds;
+#       list FBACompoundBounds;
+#       float objectiveValue;
+#       mapping> outputfiles;
+#       string MFALog;
+#       phenotypesimulationset_ref phenotypesimulationset_ref;
+#       mapping> biomassRemovals;
+#       list FBACompoundVariables;
+#       list FBAReactionVariables;
+#       list FBABiomassVariables;
+#       list FBAPromResults;
+#       list FBATintleResults;
+#       list FBADeletionResults;
+#       list FBAMinimalMediaResults;
+#       list FBAMetaboliteProductionResults;
+#       list FBAMinimalReactionsResults;
+#       list QuantitativeOptimizationSolutions;
+#       list gapfillingSolutions;
+#     }
+
 def loop_for_steadycom(param,config,callback_url):
     mu = 0.1
     LB = None

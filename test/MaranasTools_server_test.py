@@ -133,16 +133,26 @@ class MaranasToolsTest(unittest.TestCase):
     #     self.assertIn('Cannot parse integer from min_length parameter', str(errorContext.exception))
 
     def test_run_optstoic(self):
-        pass
-        # inputs = { ... define inputs here ... }
-        inputs = {}
-        print "test_run_steadycom"
-        # expected_outputs = { ... defined expected results here ... }
-        inputs = {'model_inputs': 'test','medium_upa':'test_media', 'flux_output': 'test_flux',
-        "workspace_name":self.getWsName()}
-        outputs = self.getImpl().run_steadycom(self.getContext(), inputs)[0]
-        # insert some assertion that outputs = expected_outputs below.
-        # self.assertEqual('awesome', 'aweome')
-        print(outputs)
-        self.assertIn('report_name', outputs)
-        self.assertIn('report_ref', outputs)
+        fba_client = fba_tools(self.callback_url)
+        model_files = fba_client.model_to_tsv_file({
+            'model_name': 'iMR1_799',
+            'workspace_name': 'lqw5322:narrative_1515706033382',
+            'fulldb': 1
+        })
+        print('---------test---------------')
+        pprint(model_files)
+
+
+    # def test_run_steadycom():
+        # # inputs = { ... define inputs here ... }
+        # inputs = {}
+        # print "test_run_steadycom"
+        # # expected_outputs = { ... defined expected results here ... }
+        # inputs = {'model_inputs': 'test','medium_upa':'test_media', 'flux_output': 'test_flux',
+        # "workspace_name":self.getWsName()}
+        # outputs = self.getImpl().run_steadycom(self.getContext(), inputs)[0]
+        # # insert some assertion that outputs = expected_outputs below.
+        # # self.assertEqual('awesome', 'aweome')
+        # print(outputs)
+        # self.assertIn('report_name', outputs)
+        # self.assertIn('report_ref', outputs)
