@@ -25,7 +25,7 @@ def construct_metS(list_of_mets,params,config):
     callback_url = os.environ['SDK_CALLBACK_URL']
     fba_client = fba_tools(callback_url)
 
-    model_upa_ref = params['model']
+    model_upa_ref = params['model_upa']
     workspace_name = params['workspace_name']
 
     model_id = model_upa_ref.split('/')[1]
