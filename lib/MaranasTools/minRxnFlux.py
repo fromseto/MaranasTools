@@ -569,7 +569,7 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     # rxn_file = data_dir+ "/rxn_file.tsv"
     # with open(rxn_file, 'w') as rf:
     #         rf.write(all_rxns_df)
-    all_rxns_df.to_csv(rxn_file,index=False)
+    all_rxns_df.to_csv(rxn_file,index=False,sep='\t')
 
     all_mets_list = []
     for r in list(set(all_rxns_df['id'].tolist())):
@@ -581,7 +581,7 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     # cpd_file = data_dir+"/cpd_file.tsv"   
     # with open(cpd_file, 'w') as cf:
     #     cf.write(met_pathway_df)
-    met_pathway_df.to_csv(cpd_file,index=False)
+    met_pathway_df.to_csv(cpd_file,index=False,sep='\t')
 
     # upload those files as a model and get the reference back.
     # see here for details:
