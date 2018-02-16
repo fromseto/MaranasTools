@@ -23,7 +23,7 @@ pulp_solver = pulp.solvers.GLPK_CMD(path=None, keepFiles=0, mip=1, msg=1, option
 def construct_metS(list_of_mets,params,config):
     ws = workspaceService(config['workspace-url'])
     callback_url = os.environ['SDK_CALLBACK_URL']
-    fba_client = fba_tools(callback_url)
+    fba_client = fba_tools(callback_url, service_ver="beta")
 
     model_upa_ref = params['model_upa']
     workspace_name = params['workspace_name']
