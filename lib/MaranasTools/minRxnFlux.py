@@ -728,7 +728,8 @@ def build_s_matrix(df):
     metabolites_EX = []
     for i in range(len(df)):
         rxn = df.id[i]
-        if 'BIOMASS' in rxn: continue
+        # if 'BIOMASS' in rxn: continue
+        if 'e-' in df.equation[i]: continue # cannot parse stoichiometry with e-
         reactions.append(rxn)
         try:
             # pdb.set_trace()
