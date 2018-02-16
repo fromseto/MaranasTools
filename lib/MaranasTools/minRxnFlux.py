@@ -306,8 +306,9 @@ class MinRxnFlux(object):
         if params['use_heterologous_steps'] == True:
             rxns_tsv = model_files['reactions_file']['path']
             rxns_df = pd.read_table(rxns_tsv)
-            native_reactions = rxns_df[rxns_df['in model']==1][id].tolist()
-            hetere_reactions = rxns_df[rxns_df['in model']==0][id].tolist()
+            rxns_df.head()
+            native_reactions = rxns_df[rxns_df["in model"]==1]['id'].tolist()
+            hetere_reactions = rxns_df[rxns_df["in model"]==0]['id'].tolist()
 
         for j in self.database.reactions:
 
