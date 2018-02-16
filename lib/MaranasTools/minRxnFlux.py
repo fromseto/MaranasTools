@@ -600,7 +600,7 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     print('UPLOAD A MODEL - GOT UPA')
     print(model_upa['ref'])
 
-    pprint(self.getWsClient().get_objects2({'objects': [{'ref': model_upa['ref']}]}))
+    # pprint(self.getWsClient().get_objects2({'objects': [{'ref': model_upa['ref']}]}))
 
 def run_minRxnFlux(optSotic_result_dict, config, params, model_files):
 
