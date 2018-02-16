@@ -25,15 +25,15 @@ def construct_metS(list_of_mets,params,config):
     callback_url = os.environ['SDK_CALLBACK_URL']
     fba_client = fba_tools(callback_url)
 
-    # model_upa_ref = params['model_upa']
-    # workspace_name = params['workspace_name']
+    model_upa_ref = params['model_upa']
+    workspace_name = params['workspace_name']
 
-    # model_id = model_upa_ref.split('/')[1]
+    model_name = model_upa_ref.split('/')[1]
     # model_upa = ws.get_objects2({'objects': [{'objid': model_id, 
     #                     'workspace': workspace_name}]})['data'][0]['data']
     # model_name = model_upa['name']
 
-    model_name = params['model_upa']
+    # model_name = params['model_upa']
     print model_name
 
     model_files = fba_client.model_to_tsv_file({
