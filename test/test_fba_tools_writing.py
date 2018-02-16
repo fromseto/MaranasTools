@@ -119,7 +119,6 @@ pkr0000001\t>\tc0\tnone\tpkr0000001\tnone\tnone\tnone\t(1) cpd00002[c0] => (1) c
 
         pprint(self.getWsClient().get_objects2({'objects': [{'ref': model_upa['ref']}]}))
 
-    @unittest.skip('skipping test')
     def test_fetch_model_file(self):
         fba_client = fba_tools(self.callback_url, service_ver="beta")
         model_files = fba_client.model_to_tsv_file({
@@ -186,6 +185,7 @@ pkr0000001\t>\tc0\tnone\tpkr0000001\tnone\tnone\tnone\t(1) cpd00002[c0] => (1) c
         self.assertIn('report_name', outputs)
         self.assertIn('report_ref', outputs)
 
+    @unittest.skip('skipping test')
     def test_run_optstoic_online(self):
         # inputs = { ... define inputs here ... }
         # inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}

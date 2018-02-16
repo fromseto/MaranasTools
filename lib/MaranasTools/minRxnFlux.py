@@ -277,7 +277,7 @@ class MinRxnFlux(object):
                              "Please use either 'MinFlux' or 'MinRxn'.")
         self.objective = new_objective
 
-    def create_minflux_problem(self):
+    def create_minflux_problem(self,params,model_files):
         """
         Create minflux/minRxn LP problem (a pulp LpProblem object)
         """
@@ -302,6 +302,12 @@ class MinRxnFlux(object):
                                   lowBound=-M, upBound=M, cat='Continuous')
 
         # pdb.set_trace()
+        # get the set of reactions belong to GSM and fulldb
+        if params['use_heterologous_steps'] == True:
+            rxns_tsv = model_files['reactions_file']['path']
+            rxns_df = pd.read_table(rxns_tsv)
+            native_reactions = rxns_df[rxns_df['in model']==1][id].tolist()
+            hetere_reactions = rxns_df[rxns_df['in model']==0][id].tolist()
 
         for j in self.database.reactions:
 
@@ -355,19 +361,40 @@ class MinRxnFlux(object):
         lp_prob = pulp.LpProblem("OptStoic", pulp.LpMinimize)
 
         
-        # Min-Rxn objective
-        if self.objective == 'MinRxn':
-            condition = pulp.lpSum([yf[j] + yb[j]
-                                    for j in self.database.reactions
-                                    if self.database.rxntype[j] != 4])
-            lp_prob += condition, "MinRxn"
+        if params['use_heterologous_steps'] == True:
+            # Min-Rxn objective
+            if self.objective == 'MinRxn':
+                condition = pulp.lpSum([yf[j] + yb[j]
+                                        for j in native_reactions
+                                        if self.database.rxntype[j] != 4]) + \
+                            pulp.lpSum([10*yf[j] + 10*yb[j]
+                                        for j in hetere_reactions
+                                        if self.database.rxntype[j] != 4])
+                lp_prob += condition, "MinRxn"
 
-        # Min-Flux objective
-        elif self.objective == 'MinFlux':
-            condition = pulp.lpSum([vf[j] + vb[j]
-                                    for j in self.database.reactions
-                                    if self.database.rxntype[j] != 4])
-            lp_prob += condition, "MinFlux"
+            # Min-Flux objective
+            elif self.objective == 'MinFlux':
+                condition = pulp.lpSum([vf[j] + vb[j]
+                                        for j in native_reactions
+                                        if self.database.rxntype[j] != 4]) + \
+                            pulp.lpSum([10*vf[j] + 10*vb[j]
+                                        for j in hetere_reactions
+                                        if self.database.rxntype[j] != 4])
+                lp_prob += condition, "MinFlux"
+        else:
+            # Min-Rxn objective
+            if self.objective == 'MinRxn':
+                condition = pulp.lpSum([yf[j] + yb[j]
+                                        for j in self.database.reactions
+                                        if self.database.rxntype[j] != 4])
+                lp_prob += condition, "MinRxn"
+
+            # Min-Flux objective
+            elif self.objective == 'MinFlux':
+                condition = pulp.lpSum([vf[j] + vb[j]
+                                        for j in self.database.reactions
+                                        if self.database.rxntype[j] != 4])
+                lp_prob += condition, "MinFlux"
 
         # Constraints
         # Mass_balance
@@ -405,7 +432,7 @@ class MinRxnFlux(object):
         # lp_prob.writeLP("./test_OptStoic.lp")
         return lp_prob, v, vf, vb, yf, yb, a, G
 
-    def solve(self, exclude_existing_solution=False, outputfile="OptStoic_pulp_result.txt", max_iteration=None):
+    def solve(self, params,model_files,exclude_existing_solution=False, outputfile="OptStoic_pulp_result.txt", max_iteration=None):
         """
         Solve OptStoic problem using pulp.solvers interface
 
@@ -421,7 +448,7 @@ class MinRxnFlux(object):
             max_iteration = self.max_iteration
 
         logging.info("Finding multiple pathways using Optstoic %s...", self.objective)
-        lp_prob, v, vf, vb, yf, yb, a, G = self.create_minflux_problem()
+        lp_prob, v, vf, vb, yf, yb, a, G = self.create_minflux_problem(params,model_files)
 
         # Create integer cut for existing pathways
         if exclude_existing_solution and bool(self.pathways):
@@ -641,7 +668,7 @@ def run_minRxnFlux(optSotic_result_dict, config, params, model_files):
                     M=1000)
 
     #### solve and draw pathway to figures
-    lp_prob, pathways = test.solve(outputfile='test_optstoic_mac.txt')
+    lp_prob, pathways = test.solve(params,model_files,outputfile='test_optstoic_mac.txt')
 
     workspace_name = params['workspace_name']
     test_write_fba_model(pathways,db,model_files,workspace_name,res_dir)

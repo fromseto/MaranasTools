@@ -36,16 +36,20 @@ def construct_metS(list_of_mets,params,config):
     # model_name = params['model_upa']
     print model_name
 
+    use_fulldb = 0 # default use just a GSM
+    if params['use_heterologous_steps'] == True:
+        use_fulldb = 1
+
     model_files = fba_client.model_to_tsv_file({
     'model_name': model_name, #'iMR1_799',
     'workspace_name': workspace_name, #'lqw5322:narrative_1515706033382'
-    'fulldb': 0
+    'fulldb': use_fulldb
     })
     # pprint(model_files)
 
     mets_tsv = model_files['compounds_file']['path']
     model_df = pd.read_table(mets_tsv,index_col='id')
-    
+
     met_S = {}
 
 
