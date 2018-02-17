@@ -91,10 +91,11 @@ def simulate_optStoic(params,config):
     # list_of_mets = [substrate_metabolite, target_metabolite]
 
     list_of_mets = []
+    print params['reactant_stoichs']
     for data in params['reactant_stoichs']:
-        list_of_mets.append(data['start_compound_id'])
+        list_of_mets.append(data['start_compound_id'][0])
     for data in params['product_stoichs']:
-        list_of_mets.append(data['target_compound_id'])
+        list_of_mets.append(data['target_compound_id'][0])
 
     print list_of_mets
 
@@ -157,11 +158,11 @@ def simulate_optStoic(params,config):
     for data in params['reactant_stoichs']:
         if data['fixed_stoich'] != None:
             stoic = -data['fixed_stoich']
-            lp_prob += s[data['start_compound_id']] == stoic
+            lp_prob += s[data['start_compound_id'][0]] == stoic
     for data in params['product_stoichs']:
         if data['fixed_stoich'] != None:
             stoic = -data['fixed_stoich2']
-            lp_prob += s[data['target_compound_id']] == stoic
+            lp_prob += s[data['target_compound_id'][0]] == stoic
 
     # lp_prob += s[substrate_metabolite] == -1
 
