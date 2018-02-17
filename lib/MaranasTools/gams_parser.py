@@ -66,7 +66,11 @@ def convert_parameter_list_to_dict(filename, datadict=None):
                 continue
             #remove single quotes
             entries = line.replace("'", "").split()
-            datadict[entries[0]] = float(entries[1])
+            # print entries
+            if len(entries) == 1:
+                datadict[entries[0]] = 4.0
+            else:
+                datadict[entries[0]] = float(entries[1])
     return datadict
 
 def write_list_to_file(reaction_list, outputfilename, quotes=False):

@@ -656,7 +656,7 @@ def run_minRxnFlux(optSotic_result_dict, config, params, model_files):
     pulp_solver = SCIP_CMD(path=None, keepFiles=0, mip=1, msg=1, options=[])
 
 
-    MAX_ITERATION = 1
+    MAX_ITERATION = 2
     USE_LOOPLESS = False
     CLEANUP = True #set to true if you want to delete all .sol and .lp files
 
