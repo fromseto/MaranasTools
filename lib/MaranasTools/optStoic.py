@@ -28,6 +28,7 @@ def construct_metS(list_of_mets,params,config):
     model_upa_ref = params['model_upa']
     workspace_name = params['workspace_name']
 
+    print model_upa_ref
     model_name = model_upa_ref.split('/')[1]
     # model_upa = ws.get_objects2({'objects': [{'objid': model_id, 
     #                     'workspace': workspace_name}]})['data'][0]['data']
