@@ -34,7 +34,8 @@ class CreateReport(object):
         report_dir = os.path.join(self.scratch_dir, str(uuid.uuid4()))
         self._mkdir_p(report_dir)
         # shutil.copy('/kb/module/lib/MaranasTools/Kbase_Logo_web.png', report_dir)
-        shutil.copy(res_dir + "/pathway_001.png", report_dir)
+        # shutil.copy(res_dir + "/pathway_001.png", report_dir)
+        
         # make some example content
         report_file_content = """
         <html>
