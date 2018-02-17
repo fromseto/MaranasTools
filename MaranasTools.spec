@@ -26,12 +26,29 @@ module MaranasTools {
      use_heterologous_steps - allows adding
      dG_threshold - a threshold free energy value to further constrain the path optimization
      */
+
+    typedef structure {
+        compound_id start_compound;
+        float fixed_stoich;
+    } Reactant_stoich;
+
+    typedef structure {
+        compound_id target_compound;
+        float fixed_stoich;
+    } Product_stoich;
+
+    /*  compound_id start_compound;
+        compound_id target_compound;
+    */
     typedef structure {
         model_upa model;
-        compound_id start_compound;
-        compound_id target_compound;
-        int max_steps;
+        list<Reactant_stoich> reactant_stoichs;
+        list<Product_stoich> product_stoichs;
+        boolean integer_stoich;
+        string objective;
+        list<compound_id> exclude_compound_ids;
         boolean use_heterologous_steps;
+        int num_pathways;
         float dG_threshold; /* advanced */
         string workspace_name;
     } OptStoicParams;

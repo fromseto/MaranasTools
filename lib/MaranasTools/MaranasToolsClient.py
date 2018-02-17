@@ -35,24 +35,32 @@ class MaranasTools(object):
 
     def run_optstoic(self, params, context=None):
         """
-        :param params: instance of type "OptStoicParams" (model - the FBA
-           model to use as a basis for modification start_compound - the
-           initial compound to be used as a source for the pathway
-           target_compound - the target compound to maximize yield for in the
-           pathway max_steps - the maximum number of steps to allow in the
-           optimized pathway - any pathway created that has more than this
-           number of steps is disqualified use_heterologous_steps - allows
-           adding dG_threshold - a threshold free energy value to further
-           constrain the path optimization) -> structure: parameter "model"
-           of type "model_upa" (An X/Y/Z style reference to an FBA model.),
-           parameter "start_compound" of type "compound_id" (The id of a
-           compound that exists either in the model or in the biochemistry.),
+        :param params: instance of type "OptStoicParams" (compound_id
+           start_compound; compound_id target_compound;) -> structure:
+           parameter "model" of type "model_upa" (An X/Y/Z style reference to
+           an FBA model.), parameter "reactant_stoichs" of list of type
+           "Reactant_stoich" (model - the FBA model to use as a basis for
+           modification start_compound - the initial compound to be used as a
+           source for the pathway target_compound - the target compound to
+           maximize yield for in the pathway max_steps - the maximum number
+           of steps to allow in the optimized pathway - any pathway created
+           that has more than this number of steps is disqualified
+           use_heterologous_steps - allows adding dG_threshold - a threshold
+           free energy value to further constrain the path optimization) ->
+           structure: parameter "start_compound" of type "compound_id" (The
+           id of a compound that exists either in the model or in the
+           biochemistry.), parameter "fixed_stoich" of Double, parameter
+           "product_stoichs" of list of type "Product_stoich" -> structure:
            parameter "target_compound" of type "compound_id" (The id of a
            compound that exists either in the model or in the biochemistry.),
-           parameter "max_steps" of Long, parameter "use_heterologous_steps"
-           of type "boolean" (A boolean - 0=false, 1=true @range (0, 1)),
-           parameter "dG_threshold" of Double, parameter "workspace_name" of
-           String
+           parameter "fixed_stoich" of Double, parameter "integer_stoich" of
+           type "boolean" (A boolean - 0=false, 1=true @range (0, 1)),
+           parameter "objective" of String, parameter "exclude_compound_ids"
+           of list of type "compound_id" (The id of a compound that exists
+           either in the model or in the biochemistry.), parameter
+           "use_heterologous_steps" of type "boolean" (A boolean - 0=false,
+           1=true @range (0, 1)), parameter "num_pathways" of Long, parameter
+           "dG_threshold" of Double, parameter "workspace_name" of String
         :returns: instance of type "OptStoicOutput" (report_name - name of
            the report object that gets generated. report_ref - UPA of the
            report object that gets generated.) -> structure: parameter

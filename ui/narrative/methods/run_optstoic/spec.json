@@ -10,7 +10,7 @@
         "input": null,
         "output": null
     },
-    "parameters": [
+    "parameters": [ 
         {
             "id": "model_upa",
             "optional": false,
@@ -79,16 +79,73 @@
             }
         },
         {
-            "id": "max_steps",
+            "id": "fixed_stoich",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "field_type": "text",
+            "text_options": {
+                "validate_as": "float",
+                "min_float": 0
+            }
+        },
+        {
+            "id": "fixed_stoich2",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "field_type": "text",
+            "text_options": {
+                "validate_as": "float",
+                "min_float": 0
+            }
+        },
+        {
+            "id": "integer_stoich",
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
-            "default_values": ["10"],
-            "field_type": "text",
-            "text_options": {
-                "validate_as": "int",
-                "min_int": 1
+            "field_type": "checkbox",
+            "checkbox_options": {
+                "checked_value": 1,
+                "unchecked_value": 0
             }
+        },
+        {
+            "id": "exclude_compound_id",
+            "optional": false,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "textsubdata",
+            "textsubdata_options": {
+                "allow_custom": true,
+                "show_src_obj": false,
+                "subdata_selection": {
+                    "parameter_id": "model_upa",
+                    "path_to_subdata": [
+                        "modelcompounds"
+                    ],
+                    "selection_id": "id",
+                    "selection_description": [
+                        "name"
+                    ],
+                    "subdata_included": [
+                        "modelcompounds/[*]/id",
+                        "modelcompounds/[*]/name"
+                    ],
+                    "description_template": "{{name}}"
+                },
+                "multiselection": true
+            }
+        },
+        {
+            "id": "objective",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": ["metabolite id"],
+            "field_type": "text"
         },
         {
             "id": "allow_heterologs",
@@ -110,6 +167,34 @@
             "text_options": {
                 "validate_as": "float"
             }
+        },
+        {
+            "id": "num_pathways",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": ["1"],
+            "field_type": "text",
+            "text_options": {
+                "validate_as": "int",
+                "min_int": 1
+            }
+        }
+    ],
+    "parameter-groups": [
+        {
+            "id": "reactant_stoichs",
+            "optional": false,
+            "allow_multiple": true,
+            "parameters": ["start_compound_id", "fixed_stoich"],
+            "with_border": true
+        },
+        {
+            "id": "product_stoich",
+            "optional": false,
+            "allow_multiple": true,
+            "parameters": ["target_compound_id", "fixed_stoich2"],
+            "with_border": true
         }
     ],
     "behavior": {
@@ -120,20 +205,27 @@
             "input_mapping": [
                 {
                     "input_parameter": "model_upa",
-                    "target_property": "model_upa",
-                    "target_type_transform": "ref"
+                    "target_property": "model_upa"
                 },
                 {
-                    "input_parameter": "start_compound_id",
-                    "target_property": "start_compound"
+                    "input_parameter": "reactant_stoichs",
+                    "target_property": "reactant_stoichs"
                 },
                 {
-                    "input_parameter": "target_compound_id",
-                    "target_property": "target_compound"
+                    "input_parameter": "product_stoich",
+                    "target_property": "product_stoich"
                 },
                 {
-                    "input_parameter": "max_steps",
-                    "target_property": "max_steps"
+                    "input_parameter": "integer_stoich",
+                    "target_property": "integer_stoich"
+                },
+                {
+                    "input_parameter": "objective",
+                    "target_property": "objective"
+                },
+                {
+                    "input_parameter": "exclude_compound_id",
+                    "target_property": "exclude_compound_id"
                 },
                 {
                     "input_parameter": "allow_heterologs",
@@ -142,6 +234,10 @@
                 {
                     "input_parameter": "dG_threshold",
                     "target_property": "dG_threshold"
+                },
+                {
+                    "input_parameter": "num_pathways",
+                    "target_property": "num_pathways"
                 },
                 {
                   "narrative_system_variable": "workspace",

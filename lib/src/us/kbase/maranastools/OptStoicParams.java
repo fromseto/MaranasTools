@@ -2,6 +2,7 @@
 package us.kbase.maranastools;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -14,13 +15,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * <p>Original spec-file type: OptStoicParams</p>
  * <pre>
- * model - the FBA model to use as a basis for modification
- * start_compound - the initial compound to be used as a source for the pathway
- * target_compound - the target compound to maximize yield for in the pathway
- * max_steps - the maximum number of steps to allow in the optimized pathway - any pathway
- *             created that has more than this number of steps is disqualified
- * use_heterologous_steps - allows adding
- * dG_threshold - a threshold free energy value to further constrain the path optimization
+ * compound_id start_compound;
+ * compound_id target_compound;
  * </pre>
  * 
  */
@@ -28,88 +24,127 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "model",
-    "start_compound",
-    "target_compound",
-    "max_steps",
+    "reactant_stoichs",
+    "product_stoichs",
+    "integer_stoich",
+    "objective",
+    "exclude_compound_ids",
     "use_heterologous_steps",
+    "num_pathways",
     "dG_threshold",
     "workspace_name"
 })
 public class OptStoicParams {
 
     @JsonProperty("model")
-    private String model;
-    @JsonProperty("start_compound")
-    private String startCompound;
-    @JsonProperty("target_compound")
-    private String targetCompound;
-    @JsonProperty("max_steps")
-    private Long maxSteps;
+    private java.lang.String model;
+    @JsonProperty("reactant_stoichs")
+    private List<ReactantStoich> reactantStoichs;
+    @JsonProperty("product_stoichs")
+    private List<ProductStoich> productStoichs;
+    @JsonProperty("integer_stoich")
+    private Long integerStoich;
+    @JsonProperty("objective")
+    private java.lang.String objective;
+    @JsonProperty("exclude_compound_ids")
+    private List<String> excludeCompoundIds;
     @JsonProperty("use_heterologous_steps")
     private Long useHeterologousSteps;
+    @JsonProperty("num_pathways")
+    private Long numPathways;
     @JsonProperty("dG_threshold")
     private Double dGThreshold;
     @JsonProperty("workspace_name")
-    private String workspaceName;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private java.lang.String workspaceName;
+    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("model")
-    public String getModel() {
+    public java.lang.String getModel() {
         return model;
     }
 
     @JsonProperty("model")
-    public void setModel(String model) {
+    public void setModel(java.lang.String model) {
         this.model = model;
     }
 
-    public OptStoicParams withModel(String model) {
+    public OptStoicParams withModel(java.lang.String model) {
         this.model = model;
         return this;
     }
 
-    @JsonProperty("start_compound")
-    public String getStartCompound() {
-        return startCompound;
+    @JsonProperty("reactant_stoichs")
+    public List<ReactantStoich> getReactantStoichs() {
+        return reactantStoichs;
     }
 
-    @JsonProperty("start_compound")
-    public void setStartCompound(String startCompound) {
-        this.startCompound = startCompound;
+    @JsonProperty("reactant_stoichs")
+    public void setReactantStoichs(List<ReactantStoich> reactantStoichs) {
+        this.reactantStoichs = reactantStoichs;
     }
 
-    public OptStoicParams withStartCompound(String startCompound) {
-        this.startCompound = startCompound;
+    public OptStoicParams withReactantStoichs(List<ReactantStoich> reactantStoichs) {
+        this.reactantStoichs = reactantStoichs;
         return this;
     }
 
-    @JsonProperty("target_compound")
-    public String getTargetCompound() {
-        return targetCompound;
+    @JsonProperty("product_stoichs")
+    public List<ProductStoich> getProductStoichs() {
+        return productStoichs;
     }
 
-    @JsonProperty("target_compound")
-    public void setTargetCompound(String targetCompound) {
-        this.targetCompound = targetCompound;
+    @JsonProperty("product_stoichs")
+    public void setProductStoichs(List<ProductStoich> productStoichs) {
+        this.productStoichs = productStoichs;
     }
 
-    public OptStoicParams withTargetCompound(String targetCompound) {
-        this.targetCompound = targetCompound;
+    public OptStoicParams withProductStoichs(List<ProductStoich> productStoichs) {
+        this.productStoichs = productStoichs;
         return this;
     }
 
-    @JsonProperty("max_steps")
-    public Long getMaxSteps() {
-        return maxSteps;
+    @JsonProperty("integer_stoich")
+    public Long getIntegerStoich() {
+        return integerStoich;
     }
 
-    @JsonProperty("max_steps")
-    public void setMaxSteps(Long maxSteps) {
-        this.maxSteps = maxSteps;
+    @JsonProperty("integer_stoich")
+    public void setIntegerStoich(Long integerStoich) {
+        this.integerStoich = integerStoich;
     }
 
-    public OptStoicParams withMaxSteps(Long maxSteps) {
-        this.maxSteps = maxSteps;
+    public OptStoicParams withIntegerStoich(Long integerStoich) {
+        this.integerStoich = integerStoich;
+        return this;
+    }
+
+    @JsonProperty("objective")
+    public java.lang.String getObjective() {
+        return objective;
+    }
+
+    @JsonProperty("objective")
+    public void setObjective(java.lang.String objective) {
+        this.objective = objective;
+    }
+
+    public OptStoicParams withObjective(java.lang.String objective) {
+        this.objective = objective;
+        return this;
+    }
+
+    @JsonProperty("exclude_compound_ids")
+    public List<String> getExcludeCompoundIds() {
+        return excludeCompoundIds;
+    }
+
+    @JsonProperty("exclude_compound_ids")
+    public void setExcludeCompoundIds(List<String> excludeCompoundIds) {
+        this.excludeCompoundIds = excludeCompoundIds;
+    }
+
+    public OptStoicParams withExcludeCompoundIds(List<String> excludeCompoundIds) {
+        this.excludeCompoundIds = excludeCompoundIds;
         return this;
     }
 
@@ -125,6 +160,21 @@ public class OptStoicParams {
 
     public OptStoicParams withUseHeterologousSteps(Long useHeterologousSteps) {
         this.useHeterologousSteps = useHeterologousSteps;
+        return this;
+    }
+
+    @JsonProperty("num_pathways")
+    public Long getNumPathways() {
+        return numPathways;
+    }
+
+    @JsonProperty("num_pathways")
+    public void setNumPathways(Long numPathways) {
+        this.numPathways = numPathways;
+    }
+
+    public OptStoicParams withNumPathways(Long numPathways) {
+        this.numPathways = numPathways;
         return this;
     }
 
@@ -144,33 +194,33 @@ public class OptStoicParams {
     }
 
     @JsonProperty("workspace_name")
-    public String getWorkspaceName() {
+    public java.lang.String getWorkspaceName() {
         return workspaceName;
     }
 
     @JsonProperty("workspace_name")
-    public void setWorkspaceName(String workspaceName) {
+    public void setWorkspaceName(java.lang.String workspaceName) {
         this.workspaceName = workspaceName;
     }
 
-    public OptStoicParams withWorkspaceName(String workspaceName) {
+    public OptStoicParams withWorkspaceName(java.lang.String workspaceName) {
         this.workspaceName = workspaceName;
         return this;
     }
 
     @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
+    public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(String name, Object value) {
+    public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 
     @Override
-    public String toString() {
-        return ((((((((((((((((("OptStoicParams"+" [model=")+ model)+", startCompound=")+ startCompound)+", targetCompound=")+ targetCompound)+", maxSteps=")+ maxSteps)+", useHeterologousSteps=")+ useHeterologousSteps)+", dGThreshold=")+ dGThreshold)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
+    public java.lang.String toString() {
+        return ((((((((((((((((((((((("OptStoicParams"+" [model=")+ model)+", reactantStoichs=")+ reactantStoichs)+", productStoichs=")+ productStoichs)+", integerStoich=")+ integerStoich)+", objective=")+ objective)+", excludeCompoundIds=")+ excludeCompoundIds)+", useHeterologousSteps=")+ useHeterologousSteps)+", numPathways=")+ numPathways)+", dGThreshold=")+ dGThreshold)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

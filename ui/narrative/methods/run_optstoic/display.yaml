@@ -39,11 +39,31 @@ parameters :
             Target compound for pathfinding
         short-hint : |
             The target compound for which yield will be maximized.
-    max_steps:
+    fixed_stoich:
         ui-name : |
-            Maximum reaction steps
+            stoichiometry
         short-hint : |
-            The maximum number of reaction steps allowed in the generated pathway.
+            fix the stoichiometry of the selected metabolites
+    fixed_stoich2:
+        ui-name : |
+            stoichiometry
+        short-hint : |
+            fix the stoichiometry of the selected metabolites
+    integer_stoich:
+        ui-name : |
+            integer stoichiometry
+        short-hint : |
+            Set stoichiometry for integer values only
+    exclude_compound_id :
+        ui-name : |
+            compounds that should be exclude from the pathway design
+        short-hint : |
+            A compound that users do not want to include in the pathway.    
+    objective:
+        ui-name : |
+            objective (maximize)
+        short-hint : |
+            Set variable(s) to maximize
     allow_heterologs:
         ui-name : |
             Use heterologous steps
@@ -54,5 +74,21 @@ parameters :
             Free energy threshold
         short-hint : |
             Maximum allowed free energy threshold.
+    num_pathways:
+        ui-name : |
+            The number of Pathways to return
+        short-hint : |
+            The number of pathways optStoic should return for users.
+parameter-groups :
+    reactant_stoichs:
+        ui-name : |
+            overall stoichiometry: reactants
+        short-hint : |
+            A list of reactants and products with their (optional) fixed stoichiometry
+    product_stoich:
+        ui-name : |
+            overall stoichiometry: products
+        short-hint : |
+            A list of reactants and products with their (optional) fixed stoichiometry
 description : |
     <p>This runs the optStoic method as published and maintained by the Maranas lab.</p>

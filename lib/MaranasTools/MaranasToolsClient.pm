@@ -124,14 +124,23 @@ $params is a MaranasTools.OptStoicParams
 $output is a MaranasTools.OptStoicOutput
 OptStoicParams is a reference to a hash where the following keys are defined:
 	model has a value which is a MaranasTools.model_upa
-	start_compound has a value which is a MaranasTools.compound_id
-	target_compound has a value which is a MaranasTools.compound_id
-	max_steps has a value which is an int
+	reactant_stoichs has a value which is a reference to a list where each element is a MaranasTools.Reactant_stoich
+	product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
+	integer_stoich has a value which is a MaranasTools.boolean
+	objective has a value which is a string
+	exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
 	use_heterologous_steps has a value which is a MaranasTools.boolean
+	num_pathways has a value which is an int
 	dG_threshold has a value which is a float
 	workspace_name has a value which is a string
 model_upa is a string
+Reactant_stoich is a reference to a hash where the following keys are defined:
+	start_compound has a value which is a MaranasTools.compound_id
+	fixed_stoich has a value which is a float
 compound_id is a string
+Product_stoich is a reference to a hash where the following keys are defined:
+	target_compound has a value which is a MaranasTools.compound_id
+	fixed_stoich has a value which is a float
 boolean is an int
 OptStoicOutput is a reference to a hash where the following keys are defined:
 	report_name has a value which is a string
@@ -147,14 +156,23 @@ $params is a MaranasTools.OptStoicParams
 $output is a MaranasTools.OptStoicOutput
 OptStoicParams is a reference to a hash where the following keys are defined:
 	model has a value which is a MaranasTools.model_upa
-	start_compound has a value which is a MaranasTools.compound_id
-	target_compound has a value which is a MaranasTools.compound_id
-	max_steps has a value which is an int
+	reactant_stoichs has a value which is a reference to a list where each element is a MaranasTools.Reactant_stoich
+	product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
+	integer_stoich has a value which is a MaranasTools.boolean
+	objective has a value which is a string
+	exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
 	use_heterologous_steps has a value which is a MaranasTools.boolean
+	num_pathways has a value which is an int
 	dG_threshold has a value which is a float
 	workspace_name has a value which is a string
 model_upa is a string
+Reactant_stoich is a reference to a hash where the following keys are defined:
+	start_compound has a value which is a MaranasTools.compound_id
+	fixed_stoich has a value which is a float
 compound_id is a string
+Product_stoich is a reference to a hash where the following keys are defined:
+	target_compound has a value which is a MaranasTools.compound_id
+	fixed_stoich has a value which is a float
 boolean is an int
 OptStoicOutput is a reference to a hash where the following keys are defined:
 	report_name has a value which is a string
@@ -506,7 +524,7 @@ a string
 
 
 
-=head2 OptStoicParams
+=head2 Reactant_stoich
 
 =over 4
 
@@ -529,11 +547,84 @@ dG_threshold - a threshold free energy value to further constrain the path optim
 
 <pre>
 a reference to a hash where the following keys are defined:
-model has a value which is a MaranasTools.model_upa
 start_compound has a value which is a MaranasTools.compound_id
+fixed_stoich has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+start_compound has a value which is a MaranasTools.compound_id
+fixed_stoich has a value which is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 Product_stoich
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
 target_compound has a value which is a MaranasTools.compound_id
-max_steps has a value which is an int
+fixed_stoich has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+target_compound has a value which is a MaranasTools.compound_id
+fixed_stoich has a value which is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 OptStoicParams
+
+=over 4
+
+
+
+=item Description
+
+compound_id start_compound;
+compound_id target_compound;
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+model has a value which is a MaranasTools.model_upa
+reactant_stoichs has a value which is a reference to a list where each element is a MaranasTools.Reactant_stoich
+product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
+integer_stoich has a value which is a MaranasTools.boolean
+objective has a value which is a string
+exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
 use_heterologous_steps has a value which is a MaranasTools.boolean
+num_pathways has a value which is an int
 dG_threshold has a value which is a float
 workspace_name has a value which is a string
 
@@ -545,10 +636,13 @@ workspace_name has a value which is a string
 
 a reference to a hash where the following keys are defined:
 model has a value which is a MaranasTools.model_upa
-start_compound has a value which is a MaranasTools.compound_id
-target_compound has a value which is a MaranasTools.compound_id
-max_steps has a value which is an int
+reactant_stoichs has a value which is a reference to a list where each element is a MaranasTools.Reactant_stoich
+product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
+integer_stoich has a value which is a MaranasTools.boolean
+objective has a value which is a string
+exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
 use_heterologous_steps has a value which is a MaranasTools.boolean
+num_pathways has a value which is an int
 dG_threshold has a value which is a float
 workspace_name has a value which is a string
 
