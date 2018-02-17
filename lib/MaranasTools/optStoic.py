@@ -64,6 +64,7 @@ def construct_metS(list_of_mets,params,config):
         # get elements
         formula = model_df.loc[met_id]['formula']
 
+        print formula
         elements = re.findall(r'([A-Z][a-z]*)(\d*)', formula)
         # for element in elements:
         #     for ele,value in element.iteritems():
@@ -94,6 +95,8 @@ def simulate_optStoic(params,config):
         list_of_mets.append(data['start_compound_id'])
     for data in params['product_stoichs']:
         list_of_mets.append(data['target_compound_id'])
+
+    print list_of_mets
 
     # add proton to the metabolit list because many time it is required
     if 'cpd00067_c0' not in list_of_mets:
