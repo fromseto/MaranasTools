@@ -48,11 +48,12 @@ class CreateReport(object):
         <div>
             <b>Pahtway picture:</b>
             <br>
-            <img src="pathway_001.png" width="500px"/>
         </div>
         </body>
         </html>
         """.format(stoic)
+
+        #<img src="pathway_001.png" width="500px"/>
 
         # write the file to <report_dir>/index.html
         report_filename = os.path.join(report_dir, "index.html")
