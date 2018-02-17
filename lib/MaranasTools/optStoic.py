@@ -87,9 +87,9 @@ def simulate_optStoic(params,config):
 
     list_of_mets = []
     for data in params['reactant_stoichs']:
-        list_of_mets.append(data['start_compound'])
+        list_of_mets.append(data['start_compound_id'])
     for data in params['product_stoichs']:
-        list_of_mets.append(data['start_compound'])
+        list_of_mets.append(data['target_compound_id'])
 
     # add proton to the metabolit list because many time it is required
     if 'cpd00067_c0' not in list_of_mets:
@@ -150,11 +150,11 @@ def simulate_optStoic(params,config):
     for data in params['reactant_stoichs']:
         if data['fixed_stoich'] != None:
             stoic = -data['fixed_stoich']
-            lp_prob += s[data['start_compound']] == stoic
+            lp_prob += s[data['start_compound_id']] == stoic
     for data in params['product_stoichs']:
         if data['fixed_stoich'] != None:
-            stoic = -data['fixed_stoich']
-            lp_prob += s[data['start_compound']] == stoic
+            stoic = -data['fixed_stoich2']
+            lp_prob += s[data['target_compound_id']] == stoic
 
     # lp_prob += s[substrate_metabolite] == -1
 
