@@ -587,9 +587,11 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     Sji = db.Sji     
 
     all_rxns_df = pd.DataFrame()
+    allReactions = []
     for ind, res in sorted(pathways.iteritems()):
         reaction_ids=res['reaction_id']
         rxn_pathway = rxn_df[rxn_df['id'].isin(reaction_ids)]
+        allReactions = allReactions.append(rxn_df['id'].astype(str))
         rxn_pathway['id'] = rxn_pathway['id'].astype(str) + '_' + str(ind)
         rxn_pathway['reference'] = ind
         all_rxns_df = all_rxns_df.append(rxn_pathway)
@@ -601,7 +603,8 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     all_rxns_df.to_csv(rxn_file,index=False,sep='\t')
 
     all_mets_list = []
-    for r in list(set(all_rxns_df['id'].tolist())):
+    # for r in list(set(all_rxns_df['id'].tolist())):
+    for r in list(set(allReactions)):
         all_mets_list.extend(Sji[r])
     all_mets_list= list(set(all_mets_list))
     met_pathway_df = met_df[met_df['id'].isin(all_mets_list)]
