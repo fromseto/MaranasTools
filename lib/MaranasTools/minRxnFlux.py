@@ -605,6 +605,7 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     all_mets_list = []
     # for r in list(set(all_rxns_df['id'].tolist())):
     for r in list(set(allReactions)):
+        if 'EX' in r: continue
         all_mets_list.extend(Sji[r])
     all_mets_list= list(set(all_mets_list))
     met_pathway_df = met_df[met_df['id'].isin(all_mets_list)]
