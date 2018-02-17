@@ -191,10 +191,23 @@ pkr0000001\t>\tc0\tnone\tpkr0000001\tnone\tnone\tnone\t(1) cpd00002[c0] => (1) c
         # inputs = {"start_compound":"C00267","target_compound":"C00033","workspace_name":self.getWsName()}
         print "test_run_optstoic"
         inputs = {}
-        # inputs['model'] = '12219/11/1' # 'cpd00001_c0': H2O
+
+        # # test old UI
+        # # inputs['model'] = '12219/11/1' # 'cpd00001_c0': H2O
+        # inputs['model_upa'] = 'lqw5322:narrative_1518728898914/iMR1_799' #e_coli_test'
+        # inputs['start_compound'] = 'cpd00027_c0' # glucose
+        # inputs['target_compound'] = 'cpd00029_c0' # acetate
+        # inputs['workspace_name'] = 'lqw5322:narrative_1518728898914'#'lqw5322:narrative_1515706033382'
+        # inputs['use_heterologous_steps'] = False
+
+
+        # test new UI
         inputs['model_upa'] = 'lqw5322:narrative_1518728898914/iMR1_799' #e_coli_test'
-        inputs['start_compound'] = 'cpd00027_c0' # glucose
-        inputs['target_compound'] = 'cpd00029_c0' # acetate
+        inputs['reactant_stoichs'] = [{'start_compound':'cpd00027_c0','fixed_stoich':1.0}]
+        inputs['product_stoichs'] = [{'start_compound':'cpd00029_c0','fixed_stoich':None}]
+        inputs['objective'] = 'cpd00029_c0'
+        # inputs['target_compound'] = 'cpd00029_c0' # acetate
+
         inputs['workspace_name'] = 'lqw5322:narrative_1518728898914'#'lqw5322:narrative_1515706033382'
         inputs['use_heterologous_steps'] = False
         # expected_outputs = { ... defined expected results here ... }

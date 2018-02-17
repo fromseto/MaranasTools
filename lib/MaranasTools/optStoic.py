@@ -80,10 +80,17 @@ def construct_metS(list_of_mets,params,config):
 def simulate_optStoic(params,config):
     # met_S = json.load(open("/kb/module/data/met_details_dict_v2.json"))
 
-    substrate_metabolite = params['start_compound']
-    target_metabolite = params['target_compound']
+    # substrate_metabolite = params['start_compound']
+    # target_metabolite = params['target_compound']
 
-    list_of_mets = [substrate_metabolite, target_metabolite]
+    # list_of_mets = [substrate_metabolite, target_metabolite]
+
+    list_of_mets = []
+    for data in params['reactant_stoichs']:
+        list_of_mets.append(data['start_compound'])
+    for data in params['product_stoichs']:
+        list_of_mets.append(data['start_compound'])
+
     # add proton to the metabolit list because many time it is required
     if 'cpd00067_c0' not in list_of_mets:
         list_of_mets.append('cpd00067_c0')
@@ -96,7 +103,7 @@ def simulate_optStoic(params,config):
     # target_metabolite = "C00033"
     dGmax = 5
     M = 100
-    objective = 'MaxTargetYield'
+    # objective = 'MaxTargetYield'
     EPS = 1e-5
     # allow_list_metabolite = ['C00007',#    /*o2*/
     #                         'C00267',#    /*glc*/
@@ -121,8 +128,11 @@ def simulate_optStoic(params,config):
 
     #------- define objective function
     # obj..                     zp =e= sum(i$pdt(i),s(i))/(-s('%substrate%'));
-    if objective == 'MaxTargetYield':
-        lp_prob += s[target_metabolite], "MaxTargetYield"
+    objective_stoic = params['objective']
+    lp_prob += s[objective_stoic], "MaxTargetYield"
+
+    # if objective == 'MaxTargetYield':
+        # lp_prob += s[target_metabolite], "MaxTargetYield"
 
     #------- define constraints
     # stoic(j)$(elem(j))..   sum(i,s(i)*m(i,j)) =e= 0;
@@ -134,9 +144,19 @@ def simulate_optStoic(params,config):
         lp_prob += pulp.lpSum(s[i]*met_S[i][j] for i in metabolites) == 0
 
     lp_prob += pulp.lpSum(s[i]*met_S[i]['dGf'] for i in metabolites) <= \
-                dGmax*s[substrate_metabolite],'element_'+ j
+                dGmax,'element_'+ j
+                # dGmax*s[substrate_metabolite],'element_'+ j
 
-    lp_prob += s[substrate_metabolite] == -1
+    for data in params['reactant_stoichs']:
+        if data['fixed_stoich'] != None:
+            stoic = -data['fixed_stoich']
+            lp_prob += s[data['start_compound']] == stoic
+    for data in params['product_stoichs']:
+        if data['fixed_stoich'] != None:
+            stoic = -data['fixed_stoich']
+            lp_prob += s[data['start_compound']] == stoic
+
+    # lp_prob += s[substrate_metabolite] == -1
 
     # if objective == 'MaxTargetYield':
     #     for i in metabolites:

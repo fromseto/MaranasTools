@@ -112,7 +112,7 @@
             }
         },
         {
-            "id": "exclude_compound_id",
+            "id": "exclude_compound_ids",
             "optional": false,
             "advanced": true,
             "allow_multiple": false,
@@ -190,7 +190,7 @@
             "with_border": true
         },
         {
-            "id": "product_stoich",
+            "id": "product_stoichs",
             "optional": false,
             "allow_multiple": true,
             "parameters": ["target_compound_id", "fixed_stoich2"],
@@ -212,8 +212,8 @@
                     "target_property": "reactant_stoichs"
                 },
                 {
-                    "input_parameter": "product_stoich",
-                    "target_property": "product_stoich"
+                    "input_parameter": "product_stoichs",
+                    "target_property": "product_stoichs"
                 },
                 {
                     "input_parameter": "integer_stoich",
@@ -224,8 +224,8 @@
                     "target_property": "objective"
                 },
                 {
-                    "input_parameter": "exclude_compound_id",
-                    "target_property": "exclude_compound_id"
+                    "input_parameter": "exclude_compound_ids",
+                    "target_property": "exclude_compound_ids"
                 },
                 {
                     "input_parameter": "allow_heterologs",

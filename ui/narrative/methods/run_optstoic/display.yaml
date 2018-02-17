@@ -54,7 +54,7 @@ parameters :
             integer stoichiometry
         short-hint : |
             Set stoichiometry for integer values only
-    exclude_compound_id :
+    exclude_compound_ids :
         ui-name : |
             compounds that should be exclude from the pathway design
         short-hint : |
@@ -85,7 +85,7 @@ parameter-groups :
             overall stoichiometry: reactants
         short-hint : |
             A list of reactants and products with their (optional) fixed stoichiometry
-    product_stoich:
+    product_stoichs:
         ui-name : |
             overall stoichiometry: products
         short-hint : |
