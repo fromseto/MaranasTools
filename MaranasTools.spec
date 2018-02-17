@@ -46,7 +46,7 @@ module MaranasTools {
         list<Product_stoich> product_stoichs;
         boolean integer_stoich;
         string objective;
-        list<compound_id> exclude_compound_ids;
+        compound_id exclude_compound_ids;
         boolean use_heterologous_steps;
         int num_pathways;
         float dG_threshold; /* advanced */

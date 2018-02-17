@@ -128,7 +128,7 @@ OptStoicParams is a reference to a hash where the following keys are defined:
 	product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
 	integer_stoich has a value which is a MaranasTools.boolean
 	objective has a value which is a string
-	exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
+	exclude_compound_ids has a value which is a MaranasTools.compound_id
 	use_heterologous_steps has a value which is a MaranasTools.boolean
 	num_pathways has a value which is an int
 	dG_threshold has a value which is a float
@@ -160,7 +160,7 @@ OptStoicParams is a reference to a hash where the following keys are defined:
 	product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
 	integer_stoich has a value which is a MaranasTools.boolean
 	objective has a value which is a string
-	exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
+	exclude_compound_ids has a value which is a MaranasTools.compound_id
 	use_heterologous_steps has a value which is a MaranasTools.boolean
 	num_pathways has a value which is an int
 	dG_threshold has a value which is a float
@@ -622,7 +622,7 @@ reactant_stoichs has a value which is a reference to a list where each element i
 product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
 integer_stoich has a value which is a MaranasTools.boolean
 objective has a value which is a string
-exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
+exclude_compound_ids has a value which is a MaranasTools.compound_id
 use_heterologous_steps has a value which is a MaranasTools.boolean
 num_pathways has a value which is an int
 dG_threshold has a value which is a float
@@ -640,7 +640,7 @@ reactant_stoichs has a value which is a reference to a list where each element i
 product_stoichs has a value which is a reference to a list where each element is a MaranasTools.Product_stoich
 integer_stoich has a value which is a MaranasTools.boolean
 objective has a value which is a string
-exclude_compound_ids has a value which is a reference to a list where each element is a MaranasTools.compound_id
+exclude_compound_ids has a value which is a MaranasTools.compound_id
 use_heterologous_steps has a value which is a MaranasTools.boolean
 num_pathways has a value which is an int
 dG_threshold has a value which is a float

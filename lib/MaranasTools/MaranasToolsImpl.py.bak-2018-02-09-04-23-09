@@ -30,7 +30,7 @@ This sample module contains one small method - filter_contigs.
     ######################################### noqa
     VERSION = "0.0.1"
     GIT_URL = "https://github.com/fromseto/MaranasTools.git"
-    GIT_COMMIT_HASH = "f9cc472936553c7a7d9ff75fca0fd1f75ecdc853"
+    GIT_COMMIT_HASH = "4871bcab492f9fe83f70e7c774a2d1540afa27c6"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -69,8 +69,8 @@ This sample module contains one small method - filter_contigs.
            parameter "fixed_stoich" of Double, parameter "integer_stoich" of
            type "boolean" (A boolean - 0=false, 1=true @range (0, 1)),
            parameter "objective" of String, parameter "exclude_compound_ids"
-           of type "compound_id" (The id of a compound that exists either in
-           the model or in the biochemistry.), parameter
+           of list of type "compound_id" (The id of a compound that exists
+           either in the model or in the biochemistry.), parameter
            "use_heterologous_steps" of type "boolean" (A boolean - 0=false,
            1=true @range (0, 1)), parameter "num_pathways" of Long, parameter
            "dG_threshold" of Double, parameter "workspace_name" of String

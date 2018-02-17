@@ -56,8 +56,8 @@ class MaranasTools(object):
            parameter "fixed_stoich" of Double, parameter "integer_stoich" of
            type "boolean" (A boolean - 0=false, 1=true @range (0, 1)),
            parameter "objective" of String, parameter "exclude_compound_ids"
-           of list of type "compound_id" (The id of a compound that exists
-           either in the model or in the biochemistry.), parameter
+           of type "compound_id" (The id of a compound that exists either in
+           the model or in the biochemistry.), parameter
            "use_heterologous_steps" of type "boolean" (A boolean - 0=false,
            1=true @range (0, 1)), parameter "num_pathways" of Long, parameter
            "dG_threshold" of Double, parameter "workspace_name" of String

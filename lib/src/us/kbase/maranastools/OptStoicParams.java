@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class OptStoicParams {
 
     @JsonProperty("model")
-    private java.lang.String model;
+    private String model;
     @JsonProperty("reactant_stoichs")
     private List<ReactantStoich> reactantStoichs;
     @JsonProperty("product_stoichs")
@@ -45,9 +45,9 @@ public class OptStoicParams {
     @JsonProperty("integer_stoich")
     private Long integerStoich;
     @JsonProperty("objective")
-    private java.lang.String objective;
+    private String objective;
     @JsonProperty("exclude_compound_ids")
-    private List<String> excludeCompoundIds;
+    private String excludeCompoundIds;
     @JsonProperty("use_heterologous_steps")
     private Long useHeterologousSteps;
     @JsonProperty("num_pathways")
@@ -55,20 +55,20 @@ public class OptStoicParams {
     @JsonProperty("dG_threshold")
     private Double dGThreshold;
     @JsonProperty("workspace_name")
-    private java.lang.String workspaceName;
-    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
+    private String workspaceName;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("model")
-    public java.lang.String getModel() {
+    public String getModel() {
         return model;
     }
 
     @JsonProperty("model")
-    public void setModel(java.lang.String model) {
+    public void setModel(String model) {
         this.model = model;
     }
 
-    public OptStoicParams withModel(java.lang.String model) {
+    public OptStoicParams withModel(String model) {
         this.model = model;
         return this;
     }
@@ -119,31 +119,31 @@ public class OptStoicParams {
     }
 
     @JsonProperty("objective")
-    public java.lang.String getObjective() {
+    public String getObjective() {
         return objective;
     }
 
     @JsonProperty("objective")
-    public void setObjective(java.lang.String objective) {
+    public void setObjective(String objective) {
         this.objective = objective;
     }
 
-    public OptStoicParams withObjective(java.lang.String objective) {
+    public OptStoicParams withObjective(String objective) {
         this.objective = objective;
         return this;
     }
 
     @JsonProperty("exclude_compound_ids")
-    public List<String> getExcludeCompoundIds() {
+    public String getExcludeCompoundIds() {
         return excludeCompoundIds;
     }
 
     @JsonProperty("exclude_compound_ids")
-    public void setExcludeCompoundIds(List<String> excludeCompoundIds) {
+    public void setExcludeCompoundIds(String excludeCompoundIds) {
         this.excludeCompoundIds = excludeCompoundIds;
     }
 
-    public OptStoicParams withExcludeCompoundIds(List<String> excludeCompoundIds) {
+    public OptStoicParams withExcludeCompoundIds(String excludeCompoundIds) {
         this.excludeCompoundIds = excludeCompoundIds;
         return this;
     }
@@ -194,32 +194,32 @@ public class OptStoicParams {
     }
 
     @JsonProperty("workspace_name")
-    public java.lang.String getWorkspaceName() {
+    public String getWorkspaceName() {
         return workspaceName;
     }
 
     @JsonProperty("workspace_name")
-    public void setWorkspaceName(java.lang.String workspaceName) {
+    public void setWorkspaceName(String workspaceName) {
         this.workspaceName = workspaceName;
     }
 
-    public OptStoicParams withWorkspaceName(java.lang.String workspaceName) {
+    public OptStoicParams withWorkspaceName(String workspaceName) {
         this.workspaceName = workspaceName;
         return this;
     }
 
     @JsonAnyGetter
-    public Map<java.lang.String, Object> getAdditionalProperties() {
+    public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(java.lang.String name, Object value) {
+    public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return ((((((((((((((((((((((("OptStoicParams"+" [model=")+ model)+", reactantStoichs=")+ reactantStoichs)+", productStoichs=")+ productStoichs)+", integerStoich=")+ integerStoich)+", objective=")+ objective)+", excludeCompoundIds=")+ excludeCompoundIds)+", useHeterologousSteps=")+ useHeterologousSteps)+", numPathways=")+ numPathways)+", dGThreshold=")+ dGThreshold)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
