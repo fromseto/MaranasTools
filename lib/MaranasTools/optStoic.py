@@ -160,8 +160,8 @@ def simulate_optStoic(params,config):
             stoic = -data['fixed_stoich']
             lp_prob += s[data['start_compound_id'][0]] == stoic
     for data in params['product_stoichs']:
-        if data['fixed_stoich'] != None:
-            stoic = -data['fixed_stoich2']
+        if data['fixed_stoich2'] != None:
+            stoic = data['fixed_stoich2']
             lp_prob += s[data['target_compound_id'][0]] == stoic
 
     # lp_prob += s[substrate_metabolite] == -1
