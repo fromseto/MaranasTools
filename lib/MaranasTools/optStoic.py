@@ -29,13 +29,16 @@ def construct_metS(list_of_mets,params,config):
     workspace_name = params['workspace_name']
 
     print model_upa_ref
-    model_name = model_upa_ref.split('/')[1]
+    
+    model_name = model_upa_ref
+    if '/'  in model_upa_ref:
+        model_name = model_upa_ref.split('/')[1]
     # model_upa = ws.get_objects2({'objects': [{'objid': model_id, 
     #                     'workspace': workspace_name}]})['data'][0]['data']
     # model_name = model_upa['name']
 
     # model_name = params['model_upa']
-    print model_name
+    # print model_name
 
     use_fulldb = 0 # default use just a GSM
     if params['use_heterologous_steps'] == True:
