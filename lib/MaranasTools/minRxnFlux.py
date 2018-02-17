@@ -590,8 +590,8 @@ def test_write_fba_model(pathways,db,model_files,workspace_name,res_dir):
     allReactions = []
     for ind, res in sorted(pathways.iteritems()):
         reaction_ids=res['reaction_id']
+        allReactions.extend(reaction_ids)
         rxn_pathway = rxn_df[rxn_df['id'].isin(reaction_ids)]
-        allReactions.append(rxn_df['id'].astype(str))
         rxn_pathway['id'] = rxn_pathway['id'].astype(str) + '_' + str(ind)
         rxn_pathway['reference'] = ind
         all_rxns_df = all_rxns_df.append(rxn_pathway)
