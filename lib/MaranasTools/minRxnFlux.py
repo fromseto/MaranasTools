@@ -19,7 +19,7 @@ import pandas as pd
 # sys.path.append(os.getcwd())
 import gams_parser
 from drawpath import *
-# from CreateReport import CreateReport
+from CreateReport import CreateReport
 from pulp_scip import SCIP_CMD
 import re
 from fba_tools.fba_toolsClient import fba_tools
@@ -698,6 +698,7 @@ def run_minRxnFlux(optSotic_result_dict, config, params, model_files):
 
     callback_url = os.environ['SDK_CALLBACK_URL']
     report_maker = CreateReport(callback_url, config['scratch'])
+    params['overall_stoic'] = optSotic_result_dict
     result = report_maker.run(params)
     return result
 

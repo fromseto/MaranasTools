@@ -23,11 +23,12 @@ class CreateReport(object):
         if ws_name is None:
             raise ValueError('workspace_name is required!')
         report_dir = self._build_report(params.get('text_input', ''),
-                                        params.get('checkbox_input', 0))
+                                        params.get('checkbox_input', 0),
+                                        params['overall_stoic'])
         results = self._upload_report(report_dir, ws_name)
         return results
 
-    def _build_report(self, text, checked):
+    def _build_report(self, text, checked,stoic):
         # make the directory
         res_dir = os.path.join(self.scratch_dir, "optstoic_out")
         report_dir = os.path.join(self.scratch_dir, str(uuid.uuid4()))
@@ -39,27 +40,19 @@ class CreateReport(object):
         <html>
         <body>
         <div>
-            I am an HTML report. Here's my contents:
-        </div>
-        <div>
-            <b>Text input:</b>
+            <b>The overll stoichiometry of the pathway is:</b>
             <pre>
             {}
             </pre>
         </div>
         <div>
-            <b>Checkbox checked?</b>
-            <br>
-            {}
-        </div>
-        <div>
-            <b>Here's a picture</b>
+            <b>Pahtway picture:</b>
             <br>
             <img src="pathway_001.png" width="500px"/>
         </div>
         </body>
         </html>
-        """.format(text, "yes" if checked == 1 else "no")
+        """.format(stoic)
 
         # write the file to <report_dir>/index.html
         report_filename = os.path.join(report_dir, "index.html")
