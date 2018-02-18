@@ -433,7 +433,13 @@ class MinRxnFlux(object):
 
         # exclude reactions use metabolites in the list exclude_compound_ids
         print params['exclude_compound_ids']
-        for i in params['exclude_compound_ids']:
+        exclude_metabolites_list = [params['exclude_compound_ids']]
+        if ',' in params['exclude_compound_ids']:
+            exclude_metabolites_list = params['exclude_compound_ids'].split(',')
+
+        print exclude_metabolites_list
+        
+        for i in exclude_metabolites_list:
             for j in self.database.S[i].keys():
                 if self.database.S[i][j] != 0:
                     if self.objective == 'MinRxn':
