@@ -430,6 +430,17 @@ class MinRxnFlux(object):
         else:
             a = None
             G = None
+
+        # exclude reactions use metabolites in the list exclude_compound_ids
+        print params['exclude_compound_ids']
+        for i in params['exclude_compound_ids']:
+            for j in self.database.S[i].keys():
+                if self.database.S[i][j] != 0:
+                    if self.objective == 'MinRxn':
+                        lp_prob += v[j] == 0
+                    if self.objective == 'MinFlux':
+                        lp_prob += vf[j] == 0
+                        lp_prob += vb[j] == 0
         # lp_prob.writeLP("./test_OptStoic.lp")
         return lp_prob, v, vf, vb, yf, yb, a, G
 
