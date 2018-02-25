@@ -80,12 +80,12 @@ parameters :
         short-hint : |
             The number of pathways optStoic should return for users.
 parameter-groups :
-    reactant_stoich:
+    reactant_stoichs:
         ui-name : |
             overall stoichiometry: reactants
         short-hint : |
             A list of reactants and products with their (optional) fixed stoichiometry
-    product_stoich:
+    product_stoichs:
         ui-name : |
             overall stoichiometry: products
         short-hint : |

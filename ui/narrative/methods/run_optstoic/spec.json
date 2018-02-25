@@ -192,12 +192,12 @@
                     "target_property": "model_upa"
                 },
                 {
-                    "input_parameter": "reactant_stoich",
-                    "target_property": "reactant_stoich"
+                    "input_parameter": "reactant_stoichs",
+                    "target_property": "reactant_stoichs"
                 },
                 {
-                    "input_parameter": "product_stoich",
-                    "target_property": "product_stoich"
+                    "input_parameter": "product_stoichs",
+                    "target_property": "product_stoichs"
                 },
                 {
                     "input_parameter": "integer_stoich",
