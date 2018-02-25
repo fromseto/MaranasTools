@@ -53,17 +53,17 @@ parameters :
         ui-name : |
             integer stoichiometry
         short-hint : |
-            Set stoichiometry for integer values only
-    exclude_compound_ids :
-        ui-name : |
-            compounds that should be exclude from the pathway design
-        short-hint : |
-            A compound that users do not want to include in the pathway.    
+            Set stoichiometry for integer values only    
     objective:
         ui-name : |
             objective (maximize)
         short-hint : |
             Set variable(s) to maximize
+    max_steps:
+        ui-name : |
+            Maximum reaction steps
+        short-hint : |
+            The maximum number of reaction steps allowed in the generated pathway.
     allow_heterologs:
         ui-name : |
             Use heterologous steps
@@ -80,12 +80,12 @@ parameters :
         short-hint : |
             The number of pathways optStoic should return for users.
 parameter-groups :
-    reactant_stoichs:
+    reactant_stoich:
         ui-name : |
             overall stoichiometry: reactants
         short-hint : |
             A list of reactants and products with their (optional) fixed stoichiometry
-    product_stoichs:
+    product_stoich:
         ui-name : |
             overall stoichiometry: products
         short-hint : |
