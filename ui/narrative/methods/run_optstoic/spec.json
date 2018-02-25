@@ -141,6 +141,34 @@
             }
         },
         {
+            "id": "exclude_compound_id",
+            "optional": false,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "textsubdata",
+            "textsubdata_options": {
+                "allow_custom": true,
+                "show_src_obj": false,
+                "subdata_selection": {
+                    "parameter_id": "model_upa",
+                    "path_to_subdata": [
+                        "modelcompounds"
+                    ],
+                    "selection_id": "id",
+                    "selection_description": [
+                        "name"
+                    ],
+                    "subdata_included": [
+                        "modelcompounds/[*]/id",
+                        "modelcompounds/[*]/name"
+                    ],
+                    "description_template": "{{name}}"
+                },
+                "multiselection": true
+            }
+        },
+        {
             "id": "num_pathways",
             "optional": false,
             "advanced": false,
@@ -195,10 +223,7 @@
                     "input_parameter": "objective",
                     "target_property": "objective"
                 },
-                {
-                    "input_parameter": "allow_heterologs",
-                    "target_property": "use_heterologous_steps"
-                },
+
                 {
                     "input_parameter": "dG_threshold",
                     "target_property": "dG_threshold"
@@ -206,6 +231,14 @@
                 {
                     "input_parameter": "num_pathways",
                     "target_property": "num_pathways"
+                },
+                {
+                    "input_parameter": "exclude_compound_id",
+                    "target_property": "exclude_compound_id"
+                },
+                {
+                    "input_parameter": "allow_heterologs",
+                    "target_property": "use_heterologous_steps"
                 },
                 {
                   "narrative_system_variable": "workspace",
