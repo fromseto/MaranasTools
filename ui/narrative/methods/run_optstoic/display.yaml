@@ -59,11 +59,6 @@ parameters :
             objective (maximize)
         short-hint : |
             Set variable(s) to maximize
-    max_steps:
-        ui-name : |
-            Maximum reaction steps
-        short-hint : |
-            The maximum number of reaction steps allowed in the generated pathway.
     allow_heterologs:
         ui-name : |
             Use heterologous steps

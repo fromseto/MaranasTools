@@ -120,18 +120,6 @@
             "field_type": "text"
         },
         {
-            "id": "max_steps",
-            "optional": false,
-            "advanced": false,
-            "allow_multiple": false,
-            "default_values": ["10"],
-            "field_type": "text",
-            "text_options": {
-                "validate_as": "int",
-                "min_int": 1
-            }
-        },
-        {
             "id": "allow_heterologs",
             "optional": false,
             "advanced": true,
@@ -145,7 +133,7 @@
         {
             "id": "dG_threshold",
             "optional": true,
-            "advanced": true,
+            "advanced": false,
             "allow_multiple": false,
             "field_type": "text",
             "text_options": {
@@ -206,10 +194,6 @@
                 {
                     "input_parameter": "objective",
                     "target_property": "objective"
-                },
-                {
-                    "input_parameter": "max_steps",
-                    "target_property": "max_steps"
                 },
                 {
                     "input_parameter": "allow_heterologs",

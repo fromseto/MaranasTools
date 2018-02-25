@@ -202,9 +202,9 @@ pkr0000001\t>\tc0\tnone\tpkr0000001\tnone\tnone\tnone\t(1) cpd00002[c0] => (1) c
 
 
         # test new UI
-        inputs['model_upa'] = 'lqw5322:narrative_1518728898914/iMR1_799' #e_coli_test'
-        inputs['reactant_stoichs'] = [{'start_compound':'cpd00027_c0','fixed_stoich':1.0}]
-        inputs['product_stoichs'] = [{'start_compound':'cpd00029_c0','fixed_stoich':None}]
+        inputs['model_upa'] = 'lqw5322:narrative_1518728898914/iAF1260'#iMR1_799' #e_coli_test'
+        inputs['reactant_stoichs'] = [{'start_compound_id':'cpd00027_c0','fixed_stoich':1.0}]
+        inputs['product_stoichs'] = [{'target_compound_id':'cpd00029_c0','fixed_stoich':None}]
         inputs['objective'] = 'cpd00029_c0'
         # inputs['target_compound'] = 'cpd00029_c0' # acetate
 
