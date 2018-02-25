@@ -432,22 +432,23 @@ class MinRxnFlux(object):
             G = None
 
         # exclude reactions use metabolites in the list exclude_compound_ids
-        print params['exclude_compound_ids']
-        exclude_metabolites_list = [params['exclude_compound_ids']]
-        if ',' in params['exclude_compound_ids']:
-            exclude_metabolites_list = params['exclude_compound_ids'].split(',')
+        if 'exclude_compound_ids' in params.keys():
+            print params['exclude_compound_ids']
+            exclude_metabolites_list = [params['exclude_compound_ids']]
+            if ',' in params['exclude_compound_ids']:
+                exclude_metabolites_list = params['exclude_compound_ids'].split(',')
 
-        print exclude_metabolites_list
-        
-        for i in exclude_metabolites_list:
-            for j in self.database.S[i].keys():
-                if self.database.S[i][j] != 0:
-                    if self.objective == 'MinRxn':
-                        lp_prob += v[j] == 0
-                    if self.objective == 'MinFlux':
-                        lp_prob += vf[j] == 0
-                        lp_prob += vb[j] == 0
-        # lp_prob.writeLP("./test_OptStoic.lp")
+            print exclude_metabolites_list
+            
+            for i in exclude_metabolites_list:
+                for j in self.database.S[i].keys():
+                    if self.database.S[i][j] != 0:
+                        if self.objective == 'MinRxn':
+                            lp_prob += v[j] == 0
+                        if self.objective == 'MinFlux':
+                            lp_prob += vf[j] == 0
+                            lp_prob += vb[j] == 0
+            # lp_prob.writeLP("./test_OptStoic.lp")
         return lp_prob, v, vf, vb, yf, yb, a, G
 
     def solve(self, params,model_files,exclude_existing_solution=False, outputfile="OptStoic_pulp_result.txt", max_iteration=None):
