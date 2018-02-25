@@ -167,14 +167,14 @@
     ],
     "parameter-groups": [
         {
-            "id": "reactant_stoich",
+            "id": "reactant_stoichs",
             "optional": false,
             "allow_multiple": true,
             "parameters": ["start_compound_id", "fixed_stoich"],
             "with_border": true
         },
         {
-            "id": "product_stoich",
+            "id": "product_stoichs",
             "optional": false,
             "allow_multiple": true,
             "parameters": ["target_compound_id", "fixed_stoich2"],
